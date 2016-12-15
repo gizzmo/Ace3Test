@@ -1,0 +1,16 @@
+## Interface: 71000
+## Version: 0.0.1
+
+## Title: Ace3Test
+## Notes: Testing Ace3
+
+## Author: Gizzmo
+## X-eMail: addons@justgizzmo.com
+## X-Copyright: Copyright (c) 2011-2015 Gizzmo. All rights reserved
+## X-Website: http://justgizzmo.com
+
+libs\libs.xml
+
+Ace3Test.lua
+Config.lua
+Ace3Module.lua

@@ -1,0 +1,54 @@
+local ADDON_NAME, ns = ...
+local Addon = LibStub('AceAddon-3.0'):GetAddon(ADDON_NAME)
+local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
+
+local MOD_NAME = 'ModuleTest'
+local Module = Addon:NewModule(MOD_NAME)
+
+--------------------------------------------------------------------------------
+
+local db
+local defaults = {
+    profile = {
+        ---
+    },
+}
+
+local function optGetter(info)
+    local key = info[#info]
+    return db.profile[key]
+end
+
+local function optSetter(info, value)
+    local key = info[#info]
+    db.profile[key] = value
+    Module:OnProfileRefresh()
+end
+
+local options
+local function getOptions()
+    if not options then
+        options = {
+            type = 'group',
+            name = 'Test Module',
+            arg = MOD_NAME,
+            args = {
+
+            }
+        }
+    end
+
+    return options
+end
+
+function Module:OnInitialize()
+    self.db = Addon.db:RegisterNamespace(MOD_NAME, defaults)
+    db = self.db.profile
+
+    self:SetEnabledState(Addon:GetModuleEnabled(MOD_NAME))
+    Addon:RegisterModuleOptions(MOD_NAME, getOptions, 'Test Module')
+end
+
+function Module:OnEnable()
+
+end
