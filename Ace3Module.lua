@@ -2,7 +2,7 @@ local ADDON_NAME, ns = ...
 local Addon = LibStub('AceAddon-3.0'):GetAddon(ADDON_NAME)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
-local MOD_NAME = 'ModuleTest'
+local MOD_NAME = 'ModuleA'
 local Module = Addon:NewModule(MOD_NAME)
 
 --------------------------------------------------------------------------------
@@ -30,7 +30,7 @@ local function getOptions()
     if not options then
         options = {
             type = 'group',
-            name = 'Test Module',
+            name = L['Test Module'],
             arg = MOD_NAME,
             args = {
 
@@ -46,7 +46,7 @@ function Module:OnInitialize()
     db = self.db.profile
 
     self:SetEnabledState(Addon:GetModuleEnabled(MOD_NAME))
-    Addon:RegisterModuleOptions(MOD_NAME, getOptions, 'Test Module')
+    Addon:RegisterModuleOptions(MOD_NAME, getOptions, L['Test Module'])
 end
 
 function Module:OnEnable()

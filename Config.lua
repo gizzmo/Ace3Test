@@ -15,14 +15,14 @@ local function optSetter(info, value)
     Addon:OnProfileRefresh()
 end
 
+-- Generate the options table
 local function getOptions()
     if not options then
         options = {
+            name = ADDON_NAME,
             type = 'group',
-            name = 'Ace3Test',
             args = {
                 general = {
-                    order = 1,
                     type = 'group',
                     name = L['General Settings'],
                     get = optGetter,
@@ -34,8 +34,9 @@ local function getOptions()
             },
         }
 
-        for k,v in pairs(moduleOptions) do
-            options.args[k] = (type(v) == 'function') and v() or v
+        -- Include all the provided module options
+        for key,v in pairs(moduleOptions) do
+            options.args[key] = (type(v) == 'function') and v() or v
         end
     end
 
@@ -45,21 +46,25 @@ end
 local function openOptions()
     InterfaceOptionsFrame_Show()
     -- open the profiles tab before, so the menu expands
-    InterfaceOptionsFrame_OpenToCategory(optionsFrames.Profiles)
+    InterfaceOptionsFrame_OpenToCategory(optionsFrames.profiles)
     InterfaceOptionsFrame_OpenToCategory(optionsFrames[ADDON_NAME])
     InterfaceOptionsFrame:Raise()
 end
 
 function Addon:SetupOptions()
     LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, getOptions)
+
+    -- create a link in the interface options
     optionsFrames[ADDON_NAME] = LibStub('AceConfigDialog-3.0'):AddToBlizOptions(ADDON_NAME, nil, nil, 'general')
 
-    self:RegisterModuleOptions('Profiles', LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db), 'Profiles')
+    -- add profile options link -- this link will always be first because its the first registred
+    self:RegisterModuleOptions('profiles', LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db), 'Profiles')
 
+    -- slash command to open options
     LibStub('AceConsole-3.0'):RegisterChatCommand('ace', openOptions)
 end
 
-function Addon:RegisterModuleOptions(name, optionTbl, displayName)
-    moduleOptions[name] = optionTbl
-    optionsFrames[name] = LibStub('AceConfigDialog-3.0'):AddToBlizOptions(ADDON_NAME, displayName, ADDON_NAME, name)
+function Addon:RegisterModuleOptions(key, optionsTbl, displayName)
+    moduleOptions[key] = optionsTbl
+    optionsFrames[key] = LibStub('AceConfigDialog-3.0'):AddToBlizOptions(ADDON_NAME, displayName, ADDON_NAME, key)
 end
