@@ -7,7 +7,6 @@ local Module = Addon:NewModule(MOD_NAME)
 
 --------------------------------------------------------------------------------
 
-local db
 local defaults = {
     profile = {
         ---
@@ -43,9 +42,8 @@ end
 
 function Module:OnInitialize()
     self.db = Addon.db:RegisterNamespace(MOD_NAME, defaults)
-    db = self.db.profile
 
-    self:SetEnabledState(Addon:GetModuleEnabled(MOD_NAME))
+    self:SetEnabledState(Addon:GetModuleEnabledState(MOD_NAME))
     Addon:RegisterModuleOptions(MOD_NAME, getOptions, L['Test Module'])
 end
 
