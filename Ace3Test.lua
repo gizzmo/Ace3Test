@@ -58,6 +58,7 @@ end
 function Addon:OnProfileRefresh()
     -- Loop though all modules and only update if it needs to be.
     for name, module in self:IterateModules() do
+        module.db = self.db:GetNamespace(name)
         if type(module.OnProfileRefresh) == 'function' then
             module:OnProfileRefresh()
         end
