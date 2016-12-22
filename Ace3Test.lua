@@ -137,7 +137,7 @@ Addon.modulePrototype = {
     core = Addon,
 }
 
-function Addon.modulePrototype.OnInitialize(self)
+function Addon.modulePrototype:OnInitialize()
     self.db = Addon.db:RegisterNamespace(self.moduleName, { profile = self.defaultDB or {} })
 
     if self.options then
@@ -149,7 +149,7 @@ function Addon.modulePrototype.OnInitialize(self)
     end
 end
 
-function Addon.modulePrototype.OnEnable(self)
+function Addon.modulePrototype:OnEnable()
 
 
     if type(self.PostEnable) == "function" then
