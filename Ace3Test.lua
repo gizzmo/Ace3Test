@@ -157,5 +157,11 @@ function Addon.modulePrototype:OnEnable()
     end
 end
 
+function Addon.modulePrototype:OnProfileRefresh()
+    if type(self.PostReset) == 'function' then
+        self:PostReset()
+    end
+end
+
 Addon:SetDefaultModulePrototype(Addon.modulePrototype)
 Addon:SetDefaultModuleLibraries("AceEvent-3.0")
