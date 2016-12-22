@@ -29,9 +29,6 @@ Addon.options = {
 
 Addon.defaultDB = {
     profile = {
-        modules = {
-            ['*'] = true,
-        },
 
     }
 }
@@ -61,8 +58,6 @@ end
 function Addon:OnProfileRefresh()
     -- Loop though all modules and only update if it needs to be.
     for name, module in self:IterateModules() do
-        self:UpdateModulesState()
-
         if type(module.OnProfileRefresh) == 'function' then
             module:OnProfileRefresh()
         end
@@ -137,30 +132,6 @@ end
 
 --------------------------------------------------------------------------------
 
-function Addon:UpdateModulesState()
-    for name, module in self:IterateModules() do
-        local isEnabled, shouldEnable = module:IsEnabled(), self:GetModuleEnabledState(name)
-        if shouldEnable and not isEnabled then
-            module:Enable()
-        elseif isEnabled and not shouldEnable then
-            module:Disable()
-        end
-    end
-end
-
-function Addon:GetModuleEnabledState(name)
-    return self.db.profile.modules[name]
-end
-
-function Addon:SetModuleEnabledState(module, newState)
-    local oldState = self.db.profile.modules[module]
-    self.db.profile.modules[module] = newState
-
-    self:UpdateModulesState()
-end
-
---------------------------------------------------------------------------------
-
 Addon.modulePrototype = {
     core = Addon,
 }
@@ -171,8 +142,6 @@ function Addon.modulePrototype.OnInitialize(self)
     if self.options then
         Addon.options.args[self.moduleName] = self.options
     end
-
-    self:SetEnabledState(Addon:GetModuleEnabledState(self.moduleName))
 
     if type(self.PostInitialize) == "function" then
         self:PostInitialize()
