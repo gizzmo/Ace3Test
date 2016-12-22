@@ -7,46 +7,23 @@ local Module = Addon:NewModule(MOD_NAME)
 
 --------------------------------------------------------------------------------
 
-local defaults = {
-    profile = {
-        ---
-    },
+Module.defaultDB = {
+    ---
 }
 
-local function optGetter(info)
-    local key = info[#info]
-    return db.profile[key]
+Module.options = {
+    type = 'group',
+    name = L['Test Module'],
+    arg = MOD_NAME,
+    args = {
+
+    }
+}
+
+function Module:PostInitialize()
+
 end
 
-local function optSetter(info, value)
-    local key = info[#info]
-    db.profile[key] = value
-    Module:OnProfileRefresh()
-end
-
-local options
-local function getOptions()
-    if not options then
-        options = {
-            type = 'group',
-            name = L['Test Module'],
-            arg = MOD_NAME,
-            args = {
-
-            }
-        }
-    end
-
-    return options
-end
-
-function Module:OnInitialize()
-    self.db = Addon.db:RegisterNamespace(MOD_NAME, defaults)
-
-    self:SetEnabledState(Addon:GetModuleEnabledState(MOD_NAME))
-    Addon:RegisterModuleOptions(MOD_NAME, getOptions, L['Test Module'])
-end
-
-function Module:OnEnable()
+function Module:PostEnable()
 
 end
