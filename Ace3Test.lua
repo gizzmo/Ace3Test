@@ -89,7 +89,7 @@ function Addon:SetupOptions()
 
             self:Print(format(L['You are using version %s'], version))
         else
-            Command.HandelCommand(Addon, nil, ADDON_NAME, input)
+            Command.HandleCommand(Addon, 'ace', ADDON_NAME, input)
         end
     end)
 
