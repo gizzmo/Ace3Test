@@ -16,14 +16,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 --------------------------------------------------------------------------------
 
 Addon.options = {
-    name = ADDON_NAME,
     type = 'group',
     args = {
         general = {
             type = 'group',
             name = L['General Settings'],
-            get = optGetter,
-            set = optSetter,
+            order = 1,
             args = {
                 -- addon-wide settings here
             },
