@@ -4,13 +4,9 @@
 
 local ADDON_NAME, Addon = ...
 
---------------------------------------------------------------------------------
--- TEMP LANG
-LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
-
---------------------------------------------------------------------------------
-
 _G[ADDON_NAME] = LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON_NAME, 'AceConsole-3.0', 'AceEvent-3.0')
+
+LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 --------------------------------------------------------------------------------
