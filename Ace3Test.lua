@@ -1,12 +1,16 @@
-local ADDON_NAME, private = ...
+--[[----------------------------------------------------------------------------
+
+------------------------------------------------------------------------------]]
+
+local ADDON_NAME, Addon = ...
 
 --------------------------------------------------------------------------------
 -- TEMP LANG
 LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
 
 --------------------------------------------------------------------------------
--- Addon Delaration
-local Addon = LibStub('AceAddon-3.0'):NewAddon(ADDON_NAME, 'AceConsole-3.0', 'AceEvent-3.0')
+
+_G[ADDON_NAME] = LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON_NAME, 'AceConsole-3.0', 'AceEvent-3.0')
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 
 --------------------------------------------------------------------------------
