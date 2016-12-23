@@ -3,6 +3,7 @@
 
 ## Title: Ace3Test
 ## Notes: Testing Ace3
+## SavedVariables: Ace3TestDB
 
 ## Author: Gizzmo
 ## X-eMail: addons@justgizzmo.com
