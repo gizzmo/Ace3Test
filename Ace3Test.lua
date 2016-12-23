@@ -34,16 +34,17 @@ Addon.defaultDB = {
 function Addon:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", self.defaultDB, true)
 
+    -- Callback for when a database profile changes
     self.db.RegisterCallback(self, "OnProfileChanged", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
 
-    -- Register out options
+    -- Register our options
     LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, self.options)
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1
 
-    -- easy reload slashcmd
+    -- Easy reload slashcmd
     LibStub('AceConsole-3.0'):RegisterChatCommand('rl', function() ReloadUI() end)
 end
 
@@ -77,6 +78,7 @@ function Addon:SetupOptions()
     local Command = LibStub("AceConfigCmd-3.0")
     local Dialog = LibStub("AceConfigDialog-3.0")
 
+    -- Custom /slash command
     self:RegisterChatCommand('ace', function(input)
         if input then input = strtrim(input) end
 
@@ -91,6 +93,7 @@ function Addon:SetupOptions()
         end
     end)
 
+    -- Find all the module options
     local panels = {}
     for k,v in pairs(self.options.args) do
         if k ~= 'general' then
@@ -98,6 +101,7 @@ function Addon:SetupOptions()
         end
     end
 
+    -- .. and sort them
     table.sort(panels, function(a, b)
         if not a then return true end
         if not b then return false end
@@ -113,16 +117,17 @@ function Addon:SetupOptions()
         return orderA < orderB
     end)
 
+    -- Start adding the option links
     self.optionPanels = {
         Dialog:AddToBlizOptions(ADDON_NAME, nil, nil, 'general')
     }
 
+    -- Get all the panes and create a link to them
     for i=1, #panels do
         local path = panels[i]
         local name = self.options.args[path].name
         self.optionPanels[i+1] = Dialog:AddToBlizOptions(ADDON_NAME, name, ADDON_NAME, path)
     end
-
 
     -- self destruct
     self.SetupOptions = nil
@@ -130,6 +135,7 @@ function Addon:SetupOptions()
 end
 
 --------------------------------------------------------------------------------
+-- Module prototype to reduse code in modules
 
 Addon.modulePrototype = {
     core = Addon,
@@ -149,17 +155,17 @@ end
 
 function Addon.modulePrototype:OnEnable()
 
-
     if type(self.PostEnable) == "function" then
         self:PostEnable()
     end
 end
 
 function Addon.modulePrototype:OnProfileRefresh()
+
     if type(self.PostReset) == 'function' then
-        self:PostReset()
+        self:PostProfileRefresh()
     end
 end
 
 Addon:SetDefaultModulePrototype(Addon.modulePrototype)
-Addon:SetDefaultModuleLibraries("AceEvent-3.0")
+Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
