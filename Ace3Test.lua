@@ -60,13 +60,7 @@ function Addon:OnEnable()
 end
 
 function Addon:OnProfileRefresh()
-    -- Loop though all modules and only update if it needs to be.
-    for name, module in self:IterateModules() do
-        module.db = self.db:GetNamespace(name)
-        if type(module.OnProfileRefresh) == 'function' then
-            module:OnProfileRefresh()
-        end
-    end
+    self:ResetModules()
 end
 
 --------------------------------------------------------------------------------
@@ -162,4 +156,12 @@ function Addon:RegisterModule(name, module)
     end
 
     registeredModules[module] = true
+end
+
+function Addon:ResetModules()
+    for nane, module in self:IterateModules() do
+        if type(module.Rest) == 'function' then
+            module:Reset()
+        end
+    end
 end
