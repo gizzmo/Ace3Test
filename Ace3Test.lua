@@ -46,7 +46,7 @@ function Addon:OnInitialize()
 
     -- Register our modules
     for name,module in self:IterateModules() do
-        Addon:RegisterModule()
+        Addon:RegisterModule(name, module)
     end
 
     -- Easy reload slashcmd
@@ -154,11 +154,11 @@ function Addon:RegisterModule(name, module)
     if registeredModules[module] then return end
 
     if not module.db then
-        module.db = self.db:RegisterModule(name, { profile = self.defaultDB or {} })
+        module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
     end
 
     if module.options then
-        self.options.args[name] = self.options
+        self.options.args[name] = module.options
     end
 
     registeredModules[module] = true
