@@ -18,10 +18,10 @@ Module.options = {
     }
 }
 
-function Module:PostInitialize()
+function Module:OnInitialize()
 
 end
 
-function Module:PostEnable()
+function Module:OnEnable()
 
 end

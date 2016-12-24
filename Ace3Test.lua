@@ -44,6 +44,11 @@ function Addon:OnInitialize()
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1
 
+    -- Register our modules
+    for name,module in self:IterateModules() do
+        Addon:RegisterModule()
+    end
+
     -- Easy reload slashcmd
     LibStub('AceConsole-3.0'):RegisterChatCommand('rl', function() ReloadUI() end)
 end
@@ -131,41 +136,30 @@ function Addon:SetupOptions()
 
     -- self destruct
     self.SetupOptions = nil
-
 end
 
 --------------------------------------------------------------------------------
--- Module prototype to reduse code in modules
 
 Addon.modulePrototype = {
     core = Addon,
 }
 
-function Addon.modulePrototype:OnInitialize()
-    self.db = Addon.db:RegisterNamespace(self.moduleName, { profile = self.defaultDB or {} })
-
-    if self.options then
-        Addon.options.args[self.moduleName] = self.options
-    end
-
-    if type(self.PostInitialize) == "function" then
-        self:PostInitialize()
-    end
-end
-
-function Addon.modulePrototype:OnEnable()
-
-    if type(self.PostEnable) == "function" then
-        self:PostEnable()
-    end
-end
-
-function Addon.modulePrototype:OnProfileRefresh()
-
-    if type(self.PostReset) == 'function' then
-        self:PostProfileRefresh()
-    end
-end
-
 Addon:SetDefaultModulePrototype(Addon.modulePrototype)
 Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
+
+--------------------------------------------------------------------------------
+
+local registeredModules = {}
+function Addon:RegisterModule(name, module)
+    if registeredModules[module] then return end
+
+    if not module.db then
+        module.db = self.db:RegisterModule(name, { profile = self.defaultDB or {} })
+    end
+
+    if module.options then
+        self.options.args[name] = self.options
+    end
+
+    registeredModules[module] = true
+end
