@@ -6,7 +6,7 @@ local Module = Addon:NewModule('ModuleA')
 --------------------------------------------------------------------------------
 
 Module.defaultDB = {
-    ---
+
 }
 
 Module.options = {
@@ -19,9 +19,10 @@ Module.options = {
 }
 
 function Module:OnInitialize()
-
 end
 
 function Module:OnEnable()
+end
 
+function Module:Reset()
 end
