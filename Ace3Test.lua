@@ -12,20 +12,6 @@ Addon.L = L
 
 --------------------------------------------------------------------------------
 
-Addon.options = {
-    type = 'group',
-    args = {
-        general = {
-            type = 'group',
-            name = L['General Settings'],
-            order = 1,
-            args = {
-                -- addon-wide settings here
-            },
-        },
-    },
-}
-
 Addon.defaultDB = {
     profile = {
 
@@ -65,6 +51,20 @@ function Addon:OnProfileRefresh()
 end
 
 --------------------------------------------------------------------------------
+
+Addon.options = {
+    type = 'group',
+    args = {
+        general = {
+            type = 'group',
+            name = L['General Settings'],
+            order = 1,
+            args = {
+                -- addon-wide settings here
+            },
+        },
+    },
+}
 
 function Addon:ToggleOptions()
     -- Start by showing the interface options so things can load
