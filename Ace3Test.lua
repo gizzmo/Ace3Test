@@ -1,19 +1,26 @@
---[[----------------------------------------------------------------------------
-
-------------------------------------------------------------------------------]]
-
+-- First variable is the name of the addon folder and corresponding .toc file
+-- Second is a private table passed to all included files
 local ADDON_NAME, Addon = ...
 
+------------------------------------------------------ Addon and Locale setup --
+
+--- Initialize Ace3 onto private table and expose it to the global space
+-- so its accessable without having to to use LibStub('AceAddon-3.0'):GetAddon()
 _G[ADDON_NAME] = LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON_NAME, 'AceConsole-3.0', 'AceEvent-3.0')
 
+--- Create a default locale and attach it to the Addon for later use
+-- We dont need to set any strings because we are using the key as the value
 LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 Addon.L = L
 
---------------------------------------------------------------------------------
+-------------------------------------------------------------- Initialization --
 
 Addon.defaultDB = {
     profile = {
+
+    },
+    global = {
 
     }
 }
@@ -28,8 +35,10 @@ function Addon:OnInitialize()
 
     -- Register our options
     LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, self.options)
+
+    -- Add  options for profiles
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
-    self.options.args.profile.order = -1
+    self.options.args.profile.order = -1 -- always at the end of the list
 
     -- Register our modules
     for name,module in self:IterateModules() do
@@ -41,6 +50,7 @@ function Addon:OnInitialize()
 end
 
 function Addon:OnEnable()
+    -- Setup options here so modules can be initialized
     self:SetupOptions()
 end
 
@@ -48,7 +58,7 @@ function Addon:OnProfileRefresh()
     self:ResetModules()
 end
 
---------------------------------------------------------------------------------
+--------------------------------------------------------------------- Options --
 
 Addon.options = {
     type = 'group',
@@ -67,6 +77,7 @@ Addon.options = {
 function Addon:ToggleOptions()
     -- Start by showing the interface options so things can load
     InterfaceOptionsFrame_Show()
+    -- Open to the second panel to expand the options
     InterfaceOptionsFrame_OpenToCategory(self.optionPanels[2])
     InterfaceOptionsFrame_OpenToCategory(self.optionPanels[1])
     InterfaceOptionsFrame:Raise()
@@ -99,7 +110,7 @@ function Addon:SetupOptions()
         end
     end
 
-    -- .. and sort them
+    -- and sort them
     table.sort(panels, function(a, b)
         if not a then return true end
         if not b then return false end
@@ -115,12 +126,12 @@ function Addon:SetupOptions()
         return orderA < orderB
     end)
 
-    -- Start adding the option links
+    -- First link is the General options
     self.optionPanels = {
         Dialog:AddToBlizOptions(ADDON_NAME, nil, nil, 'general')
     }
 
-    -- Get all the panes and create a link to them
+    -- then all the panels get a link
     for i=1, #panels do
         local path = panels[i]
         local name = self.options.args[path].name
@@ -131,25 +142,29 @@ function Addon:SetupOptions()
     self.SetupOptions = function() end
 end
 
---------------------------------------------------------------------------------
+--------------------------------------------------------------------- Modules --
 
+-- Module prototype table supplies methods and properties to all modules
 Addon.modulePrototype = {
     core = Addon,
 }
 
 Addon:SetDefaultModulePrototype(Addon.modulePrototype)
-Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
 
---------------------------------------------------------------------------------
+-- Libraries that are embeded into every module
+Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
 
 local registeredModules = {}
 function Addon:RegisterModule(name, module)
+    -- We only want to register them once
     if registeredModules[module] then return end
 
+    -- Setup the module database
     if not module.db then
         module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
     end
 
+    -- Add module options if they are provided
     if module.options then
         self.options.args[name] = module.options
     end
@@ -164,3 +179,5 @@ function Addon:ResetModules()
         end
     end
 end
+
+------------------------------------------------------------------------ Fin! --
