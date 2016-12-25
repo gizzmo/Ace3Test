@@ -41,9 +41,7 @@ function Addon:OnInitialize()
 end
 
 function Addon:OnEnable()
-    if self.SetupOptions then
-        self:SetupOptions()
-    end
+    self:SetupOptions()
 end
 
 function Addon:OnProfileRefresh()
@@ -130,7 +128,7 @@ function Addon:SetupOptions()
     end
 
     -- self destruct
-    self.SetupOptions = nil
+    self.SetupOptions = function() end
 end
 
 --------------------------------------------------------------------------------
