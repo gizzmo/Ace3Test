@@ -12,5 +12,5 @@
 
 libs\libs.xml
 
-Ace3Test.lua
-Ace3Module.lua
+Core.lua
+Module.lua
