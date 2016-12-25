@@ -1,5 +1,5 @@
 local ADDON_NAME, Addon = ...
-local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
+local L = Addon.L
 
 local Module = Addon:NewModule('ModuleA')
 
