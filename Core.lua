@@ -160,7 +160,7 @@ function Addon:RegisterModule(name, module)
     if registeredModules[module] then return end
 
     -- Setup the module database
-    if not module.db then
+    if module.defaultDB and not module.db then
         module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
     end
 
