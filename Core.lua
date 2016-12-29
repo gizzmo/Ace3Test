@@ -33,9 +33,6 @@ function Addon:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
 
-    -- Register our options
-    LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, self.options)
-
     -- Add  options for profiles
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1 -- always at the end of the list
@@ -86,6 +83,7 @@ end
 function Addon:SetupOptions()
     local Command = LibStub("AceConfigCmd-3.0")
     local Dialog = LibStub("AceConfigDialog-3.0")
+    local Registry = LibStub('AceConfigRegistry-3.0')
 
     -- Custom /slash command
     self:RegisterChatCommand('ace', function(input)
@@ -126,16 +124,18 @@ function Addon:SetupOptions()
         return orderA < orderB
     end)
 
+
     -- First link is the General options
+    Registry:RegisterOptionsTable(ADDON_NAME, self.options.args.general)
     self.optionPanels = {
-        Dialog:AddToBlizOptions(ADDON_NAME, nil, nil, 'general')
+        Dialog:AddToBlizOptions(ADDON_NAME, Addon:GetName())
     }
 
     -- then all the panels get a link
     for i=1, #panels do
-        local path = panels[i]
-        local name = self.options.args[path].name
-        self.optionPanels[i+1] = Dialog:AddToBlizOptions(ADDON_NAME, name, ADDON_NAME, path)
+        local name = self.options.args[panels[i]].name
+        Registry:RegisterOptionsTable(ADDON_NAME..name, self.options.args[panels[i]])
+        self.optionPanels[i+1] = Dialog:AddToBlizOptions(ADDON_NAME..name, name, ADDON_NAME)
     end
 
     -- self destruct
