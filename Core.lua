@@ -124,7 +124,6 @@ function Addon:SetupOptions()
         return orderA < orderB
     end)
 
-
     -- First link is the General options
     Registry:RegisterOptionsTable(ADDON_NAME, self.options.args.general)
     self.optionPanels = {
