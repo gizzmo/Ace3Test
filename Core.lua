@@ -37,10 +37,8 @@ function Addon:OnInitialize()
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1 -- always at the end of the list
 
-    -- Register our modules
-    for name,module in self:IterateModules() do
-        Addon:RegisterModule(name, module)
-    end
+    -- setup our modules
+    self:RegisterModules()
 
     -- Easy reload slashcmd
     LibStub('AceConsole-3.0'):RegisterChatCommand('rl', function() ReloadUI() end)
@@ -153,22 +151,18 @@ Addon:SetDefaultModulePrototype(Addon.modulePrototype)
 -- Libraries that are embeded into every module
 Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
 
-local registeredModules = {}
-function Addon:RegisterModule(name, module)
-    -- We only want to register them once
-    if registeredModules[module] then return end
+function Addon:RegisterModules()
+    for name, module in self:IterateModules() do
+        -- Setup the module database
+        if module.defaultDB and not module.db then
+            module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
+        end
 
-    -- Setup the module database
-    if module.defaultDB and not module.db then
-        module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
+        -- Add module options if they are provided
+        if module.options then
+            self.options.args[name] = module.options
+        end
     end
-
-    -- Add module options if they are provided
-    if module.options then
-        self.options.args[name] = module.options
-    end
-
-    registeredModules[module] = true
 end
 
 function Addon:ResetModules()
