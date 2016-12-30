@@ -159,7 +159,7 @@ function Addon:RegisterModules()
         end
 
         -- Add module options if they are provided
-        if module.options then
+        if module.options and not self.options.args[name] then
             self.options.args[name] = module.options
         end
     end
