@@ -38,8 +38,8 @@ function Addon:OnInitialize()
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1 -- always at the end of the list
 
-    -- Setup our modules, add database and fetch options
-    self:RegisterModules()
+    -- Setup our modules (add database and register options)
+    self:SetupModules()
 
     -- Easy reload slashcmd
     LibStub('AceConsole-3.0'):RegisterChatCommand('rl', function() ReloadUI() end)
@@ -156,7 +156,7 @@ Addon:SetDefaultModulePrototype(Addon.modulePrototype)
 -- Libraries that are embeded into every module created.
 Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
 
-function Addon:RegisterModules()
+function Addon:SetupModules()
     for name, module in self:IterateModules() do
         -- Setup the module database
         if module.defaultDB and not module.db then
