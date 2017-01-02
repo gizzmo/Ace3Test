@@ -4,11 +4,12 @@ local ADDON_NAME, Addon = ...
 
 ------------------------------------------------------ Addon and Locale setup --
 
---- Initialize Ace3 onto private table and expose it to the global space
--- so its accessable without having to to use LibStub('AceAddon-3.0'):GetAddon()
+-- Initialize Ace3 onto private table so its accessable without having
+-- to to use LibStub('AceAddon-3.0'):GetAddon(). We expose it to the global
+-- space so we can have access easy access to it for testing in game
 _G[ADDON_NAME] = LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON_NAME, 'AceConsole-3.0', 'AceEvent-3.0')
 
---- Create a default locale and attach it to the Addon for later use
+-- Create a default locale and attach it to the Addon for later use
 -- We dont need to set any strings because we are using the key as the value
 LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
@@ -33,11 +34,11 @@ function Addon:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
 
-    -- Add  options for profiles
+    -- Add options for profiles
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1 -- always at the end of the list
 
-    -- setup our modules
+    -- Setup our modules, add database and fetch options
     self:RegisterModules()
 
     -- Easy reload slashcmd
@@ -50,10 +51,12 @@ function Addon:OnEnable()
 end
 
 function Addon:OnProfileRefresh()
+    -- Let our modules know so they can react to the changes
     self:ResetModules()
 end
 
 --------------------------------------------------------------------- Options --
+-- Note: We could move this to a new file if it gets to large
 
 Addon.options = {
     type = 'group',
@@ -69,6 +72,8 @@ Addon.options = {
     },
 }
 
+-- NOTE: Should this actaully toggle the options open and closed?
+--       Or Should we rename the method to `OpenOptions`?
 function Addon:ToggleOptions()
     -- Start by showing the interface options so things can load
     InterfaceOptionsFrame_Show()
@@ -98,7 +103,7 @@ function Addon:SetupOptions()
         end
     end)
 
-    -- Find all the module options
+    -- Find all the module options ...
     local panels = {}
     for k,v in pairs(self.options.args) do
         if k ~= 'general' then
@@ -106,7 +111,7 @@ function Addon:SetupOptions()
         end
     end
 
-    -- and sort them
+    -- ... and then sort them.
     table.sort(panels, function(a, b)
         if not a then return true end
         if not b then return false end
@@ -122,20 +127,20 @@ function Addon:SetupOptions()
         return orderA < orderB
     end)
 
-    -- First link is the General options
+    -- Create the General options link ...
     Registry:RegisterOptionsTable(ADDON_NAME, self.options.args.general)
     self.optionPanels = {
         Dialog:AddToBlizOptions(ADDON_NAME, Addon:GetName())
     }
 
-    -- then all the panels get a link
+    -- ... then a link for all modules.
     for i=1, #panels do
         local name = self.options.args[panels[i]].name
         Registry:RegisterOptionsTable(ADDON_NAME..name, self.options.args[panels[i]])
         self.optionPanels[i+1] = Dialog:AddToBlizOptions(ADDON_NAME..name, name, ADDON_NAME)
     end
 
-    -- self destruct
+    -- Self Destruct.
     self.SetupOptions = function() end
 end
 
@@ -148,7 +153,7 @@ Addon.modulePrototype = {
 
 Addon:SetDefaultModulePrototype(Addon.modulePrototype)
 
--- Libraries that are embeded into every module
+-- Libraries that are embeded into every module created.
 Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
 
 function Addon:RegisterModules()
