@@ -171,8 +171,8 @@ function Addon:RegisterModules()
 end
 
 function Addon:ResetModules()
-    for nane, module in self:IterateModules() do
-        if type(module.Rest) == 'function' then
+    for name, module in self:IterateModules() do
+        if type(module.Reset) == 'function' then
             module:Reset()
         end
     end
