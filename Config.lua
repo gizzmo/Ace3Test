@@ -3,7 +3,6 @@ local ADDON_NAME, Addon = ...
 local L = Addon.L
 
 --------------------------------------------------------------------- Options --
--- Note: We could move this to a new file if it gets to large
 
 Addon.options = {
     type = 'group',
