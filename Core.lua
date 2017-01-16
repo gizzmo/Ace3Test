@@ -15,6 +15,10 @@ LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 Addon.L = L
 
+------------------------------------------------------------------- Constants --
+
+Addon.noop = function() --[[No Operation]] end
+
 -------------------------------------------------------------- Initialization --
 
 Addon.defaultDB = {
@@ -27,6 +31,7 @@ Addon.defaultDB = {
 }
 
 function Addon:OnInitialize()
+    -- Initialize our database
     self.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", self.defaultDB, true)
 
     -- Callback for when a database profile changes

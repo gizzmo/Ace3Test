@@ -87,5 +87,5 @@ function Addon:SetupOptions()
     end
 
     -- Self Destruct.
-    self.SetupOptions = function() end
+    self.SetupOptions = self.noop
 end
