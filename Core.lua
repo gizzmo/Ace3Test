@@ -39,10 +39,6 @@ function Addon:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
 
-    -- Add options for profiles
-    self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
-    self.options.args.profile.order = -1 -- always at the end of the list
-
     -- Setup our modules (add database and register options)
     self:SetupModules()
 
@@ -77,11 +73,6 @@ function Addon:SetupModules()
         -- Setup the module database
         if module.defaultDB and not module.db then
             module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
-        end
-
-        -- Add module options if they are provided
-        if module.options and not self.options.args[name] then
-            self.options.args[name] = module.options
         end
     end
 end
