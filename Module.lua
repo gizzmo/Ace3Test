@@ -26,5 +26,8 @@ end
 function Module:OnEnable()
 end
 
+function Module:OnDisable()
+end
+
 function Module:OnProfileRefresh()
 end
