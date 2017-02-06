@@ -68,10 +68,7 @@ end
 --------------------------------------------------------------------- Modules --
 
 -- Module prototype table supplies methods and properties to all modules
-Addon.modulePrototype = {
-    core = Addon,
-}
-
+Addon.modulePrototype = {}
 Addon:SetDefaultModulePrototype(Addon.modulePrototype)
 
 -- Libraries that are embeded into every module created.
