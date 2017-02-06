@@ -41,7 +41,6 @@ function Addon:OnInitialize()
 
     -- Setup our modules
     for name, module in self:IterateModules() do
-        -- Setup the module database
         if module.defaultDB and not module.db then
             module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
         end
