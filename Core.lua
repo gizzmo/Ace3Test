@@ -43,7 +43,7 @@ function Addon:OnInitialize()
     self:SetupModules()
 
     -- Easy reload slashcmd
-    LibStub('AceConsole-3.0'):RegisterChatCommand('rl', function() ReloadUI() end)
+    self:RegisterChatCommand('rl', ReloadUI)
 end
 
 function Addon:OnEnable()
