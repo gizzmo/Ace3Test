@@ -40,7 +40,12 @@ function Addon:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
 
     -- Setup our modules
-    self:SetupModules()
+    for name, module in self:IterateModules() do
+        -- Setup the module database
+        if module.defaultDB and not module.db then
+            module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
+        end
+    end
 
     -- Easy reload slashcmd
     self:RegisterChatCommand('rl', ReloadUI)
@@ -53,7 +58,11 @@ end
 
 function Addon:OnProfileRefresh()
     -- Let our modules know so they can react to the changes
-    self:ResetModules()
+    for name, module in self:IterateModules() do
+        if type(module.OnProfileRefresh) == 'function' then
+            module:OnProfileRefresh()
+        end
+    end
 end
 
 --------------------------------------------------------------------- Modules --
@@ -67,22 +76,5 @@ Addon:SetDefaultModulePrototype(Addon.modulePrototype)
 
 -- Libraries that are embeded into every module created.
 Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
-
-function Addon:SetupModules()
-    for name, module in self:IterateModules() do
-        -- Setup the module database
-        if module.defaultDB and not module.db then
-            module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
-        end
-    end
-end
-
-function Addon:ResetModules()
-    for name, module in self:IterateModules() do
-        if type(module.Reset) == 'function' then
-            module:Reset()
-        end
-    end
-end
 
 ------------------------------------------------------------------------ Fin! --

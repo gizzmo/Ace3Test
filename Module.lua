@@ -26,5 +26,5 @@ end
 function Module:OnEnable()
 end
 
-function Module:Reset()
+function Module:OnProfileRefresh()
 end
