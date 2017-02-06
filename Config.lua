@@ -51,7 +51,7 @@ function Addon:SetupOptions()
 
     local panels = {}
 
-    -- Setup module options
+    -- Module options
     for name, module in self:IterateModules() do
         if module.options then
             self.options.args[name] = module.options
@@ -59,12 +59,12 @@ function Addon:SetupOptions()
         end
     end
 
-    -- And options for profiles
+    -- Profile options
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1
     tinsert(panels, self.options.args.profile)
 
-    -- And sort the options
+    -- Sort the panels
     table.sort(panels, function(a, b)
         if not a then return true end
         if not b then return false end
@@ -86,7 +86,7 @@ function Addon:SetupOptions()
         Dialog:AddToBlizOptions(ADDON_NAME, Addon:GetName())
     }
 
-    -- And then a link for all modules
+    -- Create a link for all the panels
     for i=1, #panels do
         local name = panels[i].name
         Registry:RegisterOptionsTable(ADDON_NAME..name, panels[i])

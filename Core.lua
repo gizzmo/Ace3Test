@@ -39,7 +39,7 @@ function Addon:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
 
-    -- Setup our modules (add database and register options)
+    -- Setup our modules
     self:SetupModules()
 
     -- Easy reload slashcmd
