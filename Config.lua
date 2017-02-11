@@ -52,20 +52,23 @@ function Addon:SetupOptions()
     -- Register the options table
     Registry:RegisterOptionsTable(ADDON_NAME, self.options)
 
-    local panels = {}
-
     -- Module options
     for name, module in self:IterateModules() do
         if module.options then
             self.options.args[name] = module.options
-            panels[name] = module.options
         end
     end
 
     -- Profile options
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1
-    panels['profile'] = self.options.args.profile
+
+    -- Grab all the panels
+    local panels = {}
+
+    for k,v in pairs(self.options.args) do
+        if k~='general' then panels[k]=v end
+    end
 
     -- Sort the panels
     table.sort(panels, function(a, b)
