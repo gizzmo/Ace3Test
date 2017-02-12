@@ -2,6 +2,9 @@
 local ADDON_NAME, Addon = ...
 local L = Addon.L
 
+-- Keep track of panels in the blizzard options.
+Addon.optionPanels = {}
+
 --------------------------------------------------------------------- Options --
 
 Addon.options = {
@@ -24,8 +27,8 @@ function Addon:ToggleOptions()
     -- Start by showing the interface options so things can load
     InterfaceOptionsFrame_Show()
     -- Open to the second panel to expand the options
-    InterfaceOptionsFrame_OpenToCategory(self.optionPanels[2])
-    InterfaceOptionsFrame_OpenToCategory(self.optionPanels[1])
+    InterfaceOptionsFrame_OpenToCategory(self.optionPanels['profile'])
+    InterfaceOptionsFrame_OpenToCategory(self.optionPanels['general'])
     InterfaceOptionsFrame:Raise()
 end
 
@@ -87,13 +90,11 @@ function Addon:SetupOptions()
     end)
 
     -- Create the link to the general options
-    self.optionPanels = {
-        Dialog:AddToBlizOptions(ADDON_NAME, Addon:GetName(), nil, 'general')
-    }
+    self.optionPanels['general'] = Dialog:AddToBlizOptions(ADDON_NAME, Addon:GetName(), nil, 'general')
 
     -- Create a link for all the panels
     for path, options in pairs(panels) do
-        self.optionPanels[#self.optionPanels+1] = Dialog:AddToBlizOptions(ADDON_NAME, options.name, ADDON_NAME, path)
+        self.optionPanels[path] = Dialog:AddToBlizOptions(ADDON_NAME, options.name, ADDON_NAME, path)
     end
 
     -- Self Destruct.
