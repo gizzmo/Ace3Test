@@ -1,33 +1,35 @@
 local ADDON_NAME, Addon = ...
 local L = Addon.L
 
-local Module = Addon:NewModule('ModuleA')
+local Module = Addon:NewModule('OtherModule')
 
 --------------------------------------------------------------------------------
-
--- By adding this property, a db property is automactly created for this module
 Module.defaultDB = {
 
 }
 
--- By adding this property, a option entry is created for this module
 Module.options = {
+    handler = Module,
     type = 'group',
-    name = L['Test Module'],
-    arg = MOD_NAME,
+    name = L['Other Module'],
     args = {
 
     }
 }
 
+---------------------------------------------------------------- Core Methods --
 function Module:OnInitialize()
+    self:Print('OnInitialize Trigered')
 end
 
 function Module:OnEnable()
+    self:Print('OnEnabled Trigered')
 end
 
 function Module:OnDisable()
+    self:Print('OnDisable Trigered')
 end
 
 function Module:OnProfileRefresh()
+    self:Print('OnProfileRefresh Trigered')
 end

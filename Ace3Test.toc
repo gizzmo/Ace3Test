@@ -31,4 +31,5 @@ libs\AceSerializer-3.0\AceSerializer-3.0.xml
 
 Core.lua
 Config.lua
-Module.lua
+TheModule.lua
+OtherModule.lua
