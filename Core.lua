@@ -57,14 +57,19 @@ end
 
 function Addon:OnProfileRefresh()
     -- Let our modules know so they can react to the changes
-    for name, module in self:IterateModules() do
-        if type(module.OnProfileRefresh) == 'function' then
-            module:OnProfileRefresh()
-        end
-    end
+    self:FireModuleMethod('OnProfileRefresh')
 end
 
 --------------------------------------------------------------------- Modules --
+
+-- Generalized method to call a method on all modules
+function Addon:FireModuleMethod(method, ...)
+    for name, module in self:IterateModules() do
+        if type(module[method]) == 'function' then
+           module[method](module, ...)
+        end
+    end
+end
 
 -- Module prototype table supplies methods and properties to all modules
 Addon.modulePrototype = {}
