@@ -70,16 +70,19 @@ function Addon:SetupOptions()
     local panels = {}
 
     for k,v in pairs(self.options.args) do
-        if k~='general' then panels[k]=v end
+        if k~='general' then tinsert(panels, k) end
     end
 
     -- Sort the panels
     table.sort(panels, function(a, b)
         if not a then return true end
         if not b then return false end
-        local orderA, orderB = a.order or 10000, b.order or 10000
+        local orderA = self.options.args[a].order or 100
+        local orderB = self.options.args[b].order or 100
         if orderA == orderB then
-            return strupper(a.name or "") < strupper(b.name or "")
+            local nameA = self.options.args[a].name or ""
+            local nameB = self.options.args[b].name or ""
+            return nameA:upper() < nameB:upper()
         end
         if orderA < 0 then
             if orderB > 0 then return false end
@@ -90,11 +93,13 @@ function Addon:SetupOptions()
     end)
 
     -- Create the link to the general options
-    self.optionPanels['general'] = Dialog:AddToBlizOptions(ADDON_NAME, Addon:GetName(), nil, 'general')
+    self.optionPanels['general'] = Dialog:AddToBlizOptions(ADDON_NAME, self:GetName(), nil, 'general')
 
     -- Create a link for all the panels
-    for path, options in pairs(panels) do
-        self.optionPanels[path] = Dialog:AddToBlizOptions(ADDON_NAME, options.name, ADDON_NAME, path)
+    for i=1,#panels do
+        local path = panels[i]
+        local name = self.options.args[path].name
+        self.optionPanels[path] = Dialog:AddToBlizOptions(ADDON_NAME, name, ADDON_NAME, path)
     end
 
     -- Self Destruct.
