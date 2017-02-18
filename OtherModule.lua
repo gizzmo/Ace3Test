@@ -8,14 +8,7 @@ Module.defaultDB = {
 
 }
 
-Module.options = {
-    handler = Module,
-    type = 'group',
-    name = L['Other Module'],
-    args = {
-
-    }
-}
+-- No options for this module
 
 ---------------------------------------------------------------- Core Methods --
 function Module:OnInitialize()
