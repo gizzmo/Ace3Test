@@ -48,11 +48,12 @@ function Addon:OnInitialize()
 
     -- Easy reload slashcmd
     self:RegisterChatCommand('rl', ReloadUI)
+
+    -- Setup options here to insure the options are always available
+    self:SetupOptions()
 end
 
 function Addon:OnEnable()
-    -- Setup options here so modules can be initialized
-    self:SetupOptions()
 end
 
 function Addon:OnProfileRefresh()
