@@ -1,4 +1,3 @@
--- Addon name and private table
 local ADDON_NAME, Addon = ...
 local L = Addon.L
 
@@ -21,11 +20,10 @@ Addon.options = {
     },
 }
 
--- NOTE: Should this actaully toggle the options open and closed?
---       Or Should we rename the method to `OpenOptions`?
 function Addon:ToggleOptions()
     -- Start by showing the interface options so things can load
     InterfaceOptionsFrame_Show()
+
     -- Open to the second panel to expand the options
     InterfaceOptionsFrame_OpenToCategory(self.optionPanels['profile'])
     InterfaceOptionsFrame_OpenToCategory(self.optionPanels['general'])

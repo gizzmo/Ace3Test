@@ -3,7 +3,6 @@
 local ADDON_NAME, Addon = ...
 
 ------------------------------------------------------ Addon and Locale setup --
-
 -- Initialize Ace3 onto private table so its accessable without having
 -- to to use LibStub('AceAddon-3.0'):GetAddon(). We expose it to the global
 -- space so we can have access easy access to it for testing in game
@@ -15,12 +14,10 @@ LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 Addon.L = L
 
-------------------------------------------------------------------- Constants --
-
+----------------------------------------------------------- Declare Variables --
 Addon.noop = function() --[[No Operation]] end
 
--------------------------------------------------------------- Initialization --
-
+----------------------------------------------------- Default Database Values --
 Addon.defaultDB = {
     profile = {
 
@@ -30,6 +27,7 @@ Addon.defaultDB = {
     }
 }
 
+-------------------------------------------------------------- Initialization --
 function Addon:OnInitialize()
     -- Initialize our database
     self.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", self.defaultDB, true)
@@ -51,12 +49,21 @@ function Addon:OnInitialize()
 
     -- Setup options here to insure the options are always available
     self:SetupOptions()
+
+    self:Print("OnInitialize Triggered")
 end
 
 function Addon:OnEnable()
+    self:Print("OnEnable Triggered")
+end
+
+function Addon:OnDisable()
+    self:Print("OnDisable Triggered")
 end
 
 function Addon:OnProfileRefresh()
+    self:Print("OnProfileRefresh Triggered")
+
     -- Let our modules know so they can react to the changes
     self:FireModuleMethod('OnProfileRefresh')
 end

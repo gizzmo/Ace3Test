@@ -1,14 +1,17 @@
 local ADDON_NAME, Addon = ...
+
+---------------------------------------------------------------- Setup Module --
+local MODULE_NAME = 'TheModule'
+local Module = Addon:NewModule(MODULE_NAME)
 local L = Addon.L
 
-local Module = Addon:NewModule('TheModule')
-
---------------------------------------------------------------------------------
+----------------------------------------------------- Default database values --
 -- By adding this property, a db property is created for this module
 Module.defaultDB = {
 
 }
 
+--------------------------------------------------------------------- Options --
 -- By adding this property, a option entry is created for this module
 Module.options = {
     handler = Module,
@@ -158,6 +161,7 @@ Module.options = {
 }
 
 -------------------------------------------------------------- Option Methods --
+-- These could be incorperated in the options table as anonymous functions
 local values = {}
 function Module:getValue(info)
     return values[info[#info]]
@@ -212,5 +216,4 @@ function Module:OnProfileRefresh()
     self:Print('OnProfileRefresh Trigered')
 end
 
-
--- TODO: add more demo code
+------------------------------------------------------------------------- Fin --

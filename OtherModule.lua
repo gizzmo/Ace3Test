@@ -1,9 +1,11 @@
 local ADDON_NAME, Addon = ...
+
+---------------------------------------------------------------- Setup Module --
+local MODULE_NAME = 'OtherModule'
+local Module = Addon:NewModule(MODULE_NAME)
 local L = Addon.L
 
-local Module = Addon:NewModule('OtherModule')
-
---------------------------------------------------------------------------------
+----------------------------------------------------- Default database values --
 Module.defaultDB = {
 
 }
@@ -26,3 +28,5 @@ end
 function Module:OnProfileRefresh()
     self:Print('OnProfileRefresh Trigered')
 end
+
+------------------------------------------------------------------------- Fin --
