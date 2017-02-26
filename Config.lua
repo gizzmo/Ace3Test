@@ -20,38 +20,12 @@ Addon.options = {
     },
 }
 
-function Addon:ToggleOptions()
-    -- Start by showing the interface options so things can load
-    InterfaceOptionsFrame_Show()
-
-    -- Open to the second panel to expand the options
-    InterfaceOptionsFrame_OpenToCategory(self.optionPanels['profile'])
-    InterfaceOptionsFrame_OpenToCategory(self.optionPanels['general'])
-    InterfaceOptionsFrame:Raise()
-end
-
 function Addon:SetupOptions()
-    local Command = LibStub("AceConfigCmd-3.0")
-    local Dialog = LibStub("AceConfigDialog-3.0")
-    local Registry = LibStub('AceConfigRegistry-3.0')
-
     -- Custom /slash command
-    self:RegisterChatCommand('ace', function(input)
-        if input then input = strtrim(input) end
-
-        if not input or input == '' then
-            self:ToggleOptions()
-        elseif strmatch(strlower(input), '^ve?r?s?i?o?n?$') then
-            local version = GetAddOnMetadata(ADDON_NAME, 'Version')
-
-            self:Print(format(L['You are using version %s'], version))
-        else
-            Command.HandleCommand(Addon, 'ace', ADDON_NAME, input)
-        end
-    end)
+    self:RegisterChatCommand('ace', 'SlashHandler')
 
     -- Register the options table
-    Registry:RegisterOptionsTable(ADDON_NAME, self.options)
+    LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, self.options)
 
     -- Module options
     for name, module in self:IterateModules() do
@@ -64,9 +38,10 @@ function Addon:SetupOptions()
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1
 
-    -- Grab all the panels
+    --------------------------------------- Add to Blizzard interface options --
     local panels = {}
 
+    -- Grab a list of possible panels
     for k,v in pairs(self.options.args) do
         if k~='general' then tinsert(panels, k) end
     end
@@ -90,6 +65,8 @@ function Addon:SetupOptions()
         return orderA < orderB
     end)
 
+    local Dialog = LibStub('AceConfigDialog-3.0')
+
     -- Create the link to the general options
     self.optionPanels['general'] = Dialog:AddToBlizOptions(ADDON_NAME, self:GetName(), nil, 'general')
 
@@ -100,6 +77,29 @@ function Addon:SetupOptions()
         self.optionPanels[path] = Dialog:AddToBlizOptions(ADDON_NAME, name, ADDON_NAME, path)
     end
 
-    -- Self Destruct.
     self.SetupOptions = self.noop
+end
+
+function Addon:SlashHandler(input)
+    local arg = self:GetArgs(input, 1)
+
+    -- No argument, open options
+    if not arg then
+        -- Start by opening the interface options so things can load
+        InterfaceOptionsFrame_Show()
+
+        -- Open to the second panel to expand the options
+        InterfaceOptionsFrame_OpenToCategory(self.optionPanels['profile'])
+        InterfaceOptionsFrame_OpenToCategory(self.optionPanels['general'])
+        InterfaceOptionsFrame:Raise()
+
+        -- TODO: Figure out why it wont open if its not visable
+        -- the user has to manually scroll the list to get access to it.
+
+    -- Version Checking
+    -- TODO: find better pattern matching
+    elseif strmatch(strlower(arg), '^ve?r?s?i?o?n?$') then
+        local version = GetAddOnMetadata(ADDON_NAME, 'Version')
+        self:Print(format(L['You are using version %s'], version))
+    end
 end
