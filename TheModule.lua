@@ -14,16 +14,14 @@ Module.defaultDB = {
 --------------------------------------------------------------------- Options --
 -- By adding this property, a option entry is created for this module
 Module.options = {
-    handler = Module,
     type = 'group',
     name = L['The Module'],
-    get = 'getValue',
-    set = 'setValue',
     args = {
         intro1 = {
             order = 1,
-            type = 'header',
+            type = 'description',
             name = L['Demo options'],
+            fontSize = 'large',
         },
         intro2 = {
             order = 2,
@@ -32,172 +30,150 @@ Module.options = {
                 ..'Each and every possible type of input type. Each type is '
                 ..'grouped together.']
         },
-        executes = {
-            type = 'group',
-            name = L['Execute types'],
-            inline = true,
-            args = {
-                execute = {
-                    type = 'execute',
-                    name = L['Execute'],
-                    func = function() Module:Print('Execute type pressed!')end,
-                }
-            }
-        },
-        inputs = {
-            type = 'group',
-            inline = true,
-            name = L['Inputs types'],
-            args = {
-                input = {
-                    type = 'input',
-                    name = L['Input'],
-                },
-                input_multiline = {
-                    type = 'input',
-                    name = L['Input Multi-line'],
-                    multiline = true,
-                },
+    }
+}
 
-            }
+-- Table to store our options, most times it will just be the database
+local values = {}
+Module.options.get = function(info)
+    return values[info[#info]]
+end
+Module.options.set = function(info, value)
+    values[info[#info]] = value
+end
+
+-- The options table is split here to show that you dont need to build it all at once.
+Module.options.args.executes = {
+    type = 'group', inline = true,
+    name = L['Execute types'],
+    args = {
+        execute = {
+            type = 'execute',
+            name = L['Execute'],
+            func = function() Module:Print('Execute type pressed!')end,
+        }
+    }
+}
+Module.options.args.inputs = {
+    type = 'group', inline = true,
+    name = L['Inputs types'],
+    args = {
+        input = {
+            type = 'input',
+            name = L['Input'],
         },
-        toggles = {
-            type = 'group',
-            inline = true,
-            name = L['Toggle types'],
-            args = {
-                toggle = {
-                    type = 'toggle',
-                    name = L['Toggle'],
-                },
-                toggle_tristate = {
-                    type = 'toggle',
-                    name = L['Toggle Tristate'],
-                    tristate = true,
-                }
-            }
+        input_multiline = {
+            type = 'input',
+            name = L['Input Multi-line'],
+            multiline = true,
         },
-        ranges = {
-            type = 'group',
-            inline = true,
-            name = L['Range types'],
-            args = {
-                range = {
-                    type = 'range',
-                    name = L['Range'],
-                    min = 1, max = 100,
-                },
-                range_percent = {
-                    type = 'range',
-                    name = L['Range'],
-                    isPercent = true,
-                    min = -1, max = 1,
-                },
-                range_bigstep = {
-                    type = 'range',
-                    name = L['Range Bigstep'],
-                    min = 0, max = 100, bigStep = 10,
-                },
-            }
+
+    }
+}
+Module.options.args.toggles = {
+    type = 'group', inline = true,
+    name = L['Toggle types'],
+    args = {
+        toggle = {
+            type = 'toggle',
+            name = L['Toggle'],
         },
-        selects = {
-            type = 'group',
-            name = L['Select types'],
-            inline = true,
-            args = {
-                select = {
-                    order = 1,
-                    type = 'select',
-                    name = L['Select'],
-                    values = 'getSelectValues',
-                },
-                radioselect = {
-                    type = 'select',
-                    name = L['Radio Select'],
-                    style = 'radio',
-                    values = 'getSelectValues',
-                },
-            }
+        toggle_tristate = {
+            type = 'toggle',
+            name = L['Toggle Tristate'],
+            tristate = true,
+        }
+    }
+}
+Module.options.args.ranges = {
+    type = 'group', inline = true,
+    name = L['Range types'],
+    args = {
+        range = {
+            type = 'range',
+            name = L['Range'],
+            min = 1, max = 100,
         },
-        multiselects = {
-            type = 'group',
-            name = L["Multi Selects types"],
-            inline = true,
-            get = 'getMultiselect',
-            set = 'setMultiselect',
-            args = {
-                multiselect = {
-                    type = 'multiselect',
-                    name = L["Multi Select"],
-                    values = 'getSelectValues',
-                },
-                multiselecttristate = {
-                    type = 'multiselect',
-                    name = L["Multi Select Tristate"],
-                    tristate = true,
-                    values = 'getSelectValues',
-                }
-            }
+        range_percent = {
+            type = 'range',
+            name = L['Range Percent'],
+            isPercent = true,
+            min = -1, max = 1,
         },
-        colors = {
-            type = 'group',
-            name = L["Colors"],
-            inline = true,
-            get = 'getColor',
-            set = 'setColor',
-            args = {
-                color = {
-                    type = 'color',
-                    name = L["Color"],
-                },
-                coloralpha = {
-                    type = 'color',
-                    name = L["Color with Alpha"],
-                    hasAlpha = true
-                },
-            }
+        range_bigstep = {
+            type = 'range',
+            name = L['Range Bigstep'],
+            min = 0, max = 100, bigStep = 10,
         },
     }
 }
 
--------------------------------------------------------------- Option Methods --
--- These could be incorperated in the options table as anonymous functions
-local values = {}
-function Module:getValue(info)
-    return values[info[#info]]
-end
-function Module:setValue(info, value)
-    values[info[#info]] = value
-end
-
-
-function Module:getSelectValues()
+local function getSelectValues()
     return {'First value','Second value','Third value','Fourth value','Fifth value','Sixth value'}
 end
-
--- Multiselect requires a extra table of keys and values
-function Module:getMultiselect(info, key)
-    if not values[info[#info]] then
-        values[info[#info]] = {}
-    end
-
-    return values[info[#info]][key]
-end
-function Module:setMultiselect(info, key, value)
-    if not values[info[#info]] then
-        values[info[#info]] = {}
-    end
-
-    values[info[#info]][key] = value
-end
-
--- Colors return multiple values
-function Module:getColor(info)
-    return unpack(values[info[#info]] or {})
-end
-function Module:setColor(info, ...)
-    values[info[#info]] = {...}
-end
+Module.options.args.selects = {
+    type = 'group', inline = true,
+    name = L['Select types'],
+    args = {
+        select = {
+            type = 'select',
+            name = L['Select'],
+            values = getSelectValues,
+        },
+        radioselect = {
+            type = 'select',
+            name = L['Radio Select'],
+            style = 'radio',
+            values = getSelectValues,
+        },
+    }
+}
+Module.options.args.multiselects = {
+    type = 'group', inline = true,
+    name = L["Multi Selects types"],
+    -- Multiselect requires a extra table to store the state of each value
+    get = function(info, key)
+        values[info[#info]] = values[info[#info]] or {}
+        return values[info[#info]][key]
+        -- body...
+    end,
+    set = function(info, key, value)
+        values[info[#info]] = values[info[#info]] or {}
+        values[info[#info]][key] = value
+        -- body...
+    end,
+    args = {
+        multiselect = {
+            type = 'multiselect',
+            name = L["Multi Select"],
+            values = getSelectValues,
+        },
+        multiselecttristate = {
+            type = 'multiselect',
+            name = L["Multi Select Tristate"],
+            tristate = true,
+            values = getSelectValues,
+        }
+    }
+}
+Module.options.args.colors = {
+    type = 'group', inline = true,
+    name = L["Colors"],
+    -- Colors deal with multiple values. r,g,b,a
+    get = function(info) return unpack(values[info[#info]] or {}) end,
+    set = function(info, ...) values[info[#info]] = {...} end,
+    args = {
+        color = {
+            type = 'color',
+            name = L["Color"],
+        },
+        coloralpha = {
+            type = 'color',
+            name = L["Color with Alpha"],
+            hasAlpha = true,
+        },
+    }
+}
 
 ---------------------------------------------------------------- Core Methods --
 function Module:OnInitialize()
