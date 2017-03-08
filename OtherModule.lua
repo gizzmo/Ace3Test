@@ -5,12 +5,26 @@ local MODULE_NAME = 'OtherModule'
 local Module = Addon:NewModule(MODULE_NAME)
 local L = Addon.L
 
------------------------------------------------------ Default database values --
-Module.defaultDB = {
+-------------------------------------------------------------------- Database --
+local defaultDB = {
+    profile = {
 
+    },
+    global = {
+
+    }
 }
 
--- No options for this module
+Module.db = Addon.db:RegisterNamespace(MODULE_NAME, defaultDB)
+
+-- Needs to be defined before the callback is registered
+function Module:OnProfileRefresh()
+    self:Print("OnProfileRefresh Triggered")
+end
+
+Module.db.RegisterCallback(Module, "OnProfileChanged", "OnProfileRefresh")
+Module.db.RegisterCallback(Module, "OnProfileCopied", "OnProfileRefresh")
+Module.db.RegisterCallback(Module, "OnProfileReset", "OnProfileRefresh")
 
 ---------------------------------------------------------------- Core Methods --
 function Module:OnInitialize()

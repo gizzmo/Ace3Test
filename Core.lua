@@ -2,6 +2,10 @@
 -- Second is a private table passed to all included files
 local ADDON_NAME, Addon = ...
 
+-- IDEA: make the private table truly private?
+-- Do this by having NewAddon make its own table and keeping
+-- the private table only for internal use
+
 ------------------------------------------------------ Addon and Locale setup --
 -- Initialize Ace3 onto private table so its accessable without having
 -- to to use LibStub('AceAddon-3.0'):GetAddon(). We expose it to the global
@@ -14,11 +18,10 @@ LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 Addon.L = L
 
------------------------------------------------------------ Declare Variables --
 Addon.noop = function() --[[No Operation]] end
 
------------------------------------------------------ Default Database Values --
-Addon.defaultDB = {
+-------------------------------------------------------------------- Database --
+local defaultDB = {
     profile = {
 
     },
@@ -27,45 +30,37 @@ Addon.defaultDB = {
     }
 }
 
--------------------------------------------------------------- Initialization --
+-- You dont need to set this up in OnInitialize,
+-- Unless you need to do something in another file before doing this.
+Addon.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", defaultDB, true)
+
+-- This needs to be defined before the callback is registered.
+-- This is the only thing that makes this style of extracting not as elegant.
+function Addon:OnProfileRefresh()
+    self:Print("OnProfileRefresh Triggered")
+end
+
+Addon.db.RegisterCallback(Addon, "OnProfileChanged", "OnProfileRefresh")
+Addon.db.RegisterCallback(Addon, "OnProfileCopied", "OnProfileRefresh")
+Addon.db.RegisterCallback(Addon, "OnProfileReset", "OnProfileRefresh")
+
+---------------------------------------------------------------- Core Methods --
+-- Things that need to happen AFTER all our file are loaded
 function Addon:OnInitialize()
-    -- Initialize our database
-    self.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", self.defaultDB, true)
-
-    -- Callback for when a database profile changes
-    self.db.RegisterCallback(self, "OnProfileChanged", "OnProfileRefresh")
-    self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
-    self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
-
-    -- Setup our modules
-    for name, module in self:IterateModules() do
-        if module.defaultDB and not module.db then
-            module.db = self.db:RegisterNamespace(name, { profile = module.defaultDB or {} })
-        end
-    end
-
-    -- Easy reload slashcmd
-    self:RegisterChatCommand('rl', ReloadUI)
-
-    -- Setup options here to insure the options are always available
-    self:SetupOptions()
+    self:AddToBlizOptions()
 
     self:Print("OnInitialize Triggered")
 end
 
+-- Register Events, Hook functions, Create Frames, Get information from
+-- the game that wasn't available in OnInitialize
 function Addon:OnEnable()
     self:Print("OnEnable Triggered")
 end
 
+-- Unhook, Unregister Events, Hide frames that you created.
 function Addon:OnDisable()
     self:Print("OnDisable Triggered")
-end
-
-function Addon:OnProfileRefresh()
-    self:Print("OnProfileRefresh Triggered")
-
-    -- Let our modules know so they can react to the changes
-    self:FireModuleMethod('OnProfileRefresh')
 end
 
 --------------------------------------------------------------------- Modules --

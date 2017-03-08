@@ -2,12 +2,12 @@ local ADDON_NAME, Addon = ...
 local L = Addon.L
 
 -- Keep track of panels in the blizzard options.
-Addon.optionPanels = {}
+local optionPanels = {}
 
 --------------------------------------------------------------------- Options --
-
 Addon.options = {
     type = 'group',
+    childGroups = 'tab',
     args = {
         general = {
             type = 'group',
@@ -20,25 +20,15 @@ Addon.options = {
     },
 }
 
-function Addon:SetupOptions()
-    -- Custom /slash command
-    self:RegisterChatCommand('ace', 'SlashHandler')
+-- Profile options
+Addon.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(Addon.db)
+Addon.options.args.profile.order = -1
 
-    -- Register the options table
-    LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, self.options)
+-- Register the options table
+LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, Addon.options)
 
-    -- Module options
-    for name, module in self:IterateModules() do
-        if module.options then
-            self.options.args[name] = module.options
-        end
-    end
-
-    -- Profile options
-    self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
-    self.options.args.profile.order = -1
-
-    --------------------------------------- Add to Blizzard interface options --
+------------------------------------------- Add to Blizzard interface options --
+function Addon:AddToBlizOptions()
     local panels = {}
 
     -- Grab a list of possible panels
@@ -68,20 +58,28 @@ function Addon:SetupOptions()
     local Dialog = LibStub('AceConfigDialog-3.0')
 
     -- Create the link to the general options
-    self.optionPanels['general'] = Dialog:AddToBlizOptions(ADDON_NAME, self:GetName(), nil, 'general')
+    optionPanels['general'] = Dialog:AddToBlizOptions(ADDON_NAME, self:GetName(), nil, 'general')
 
     -- Create a link for all the panels
     for i=1,#panels do
         local path = panels[i]
         local name = self.options.args[path].name
-        self.optionPanels[path] = Dialog:AddToBlizOptions(ADDON_NAME, name, ADDON_NAME, path)
+        optionPanels[path] = Dialog:AddToBlizOptions(ADDON_NAME, name, ADDON_NAME, path)
     end
 
-    self.SetupOptions = self.noop
+    -- All options need to be registered before this is run, and since this is
+    -- run in ADDON:OnInitialize, modules need to setup their options before that.
+
+    -- Once this is called, panels are no longer sortable, and all panels new
+    -- panels will be added to the ned of the list.
 end
 
-function Addon:SlashHandler(input)
-    local arg = self:GetArgs(input, 1)
+-------------------------------------------------------------- Slash commands --
+Addon:RegisterChatCommand('rl', ReloadUI)
+
+local version = GetAddOnMetadata(ADDON_NAME, 'Version')
+Addon:RegisterChatCommand('ace', function(input)
+    local arg = Addon:GetArgs(input, 1)
 
     -- No argument, open options
     if not arg then
@@ -89,8 +87,8 @@ function Addon:SlashHandler(input)
         InterfaceOptionsFrame_Show()
 
         -- Open to the second panel to expand the options
-        InterfaceOptionsFrame_OpenToCategory(self.optionPanels['profile'])
-        InterfaceOptionsFrame_OpenToCategory(self.optionPanels['general'])
+        InterfaceOptionsFrame_OpenToCategory(optionPanels['profile'])
+        InterfaceOptionsFrame_OpenToCategory(optionPanels['general'])
         InterfaceOptionsFrame:Raise()
 
         -- TODO: Figure out why it wont open if its not visable
@@ -99,7 +97,6 @@ function Addon:SlashHandler(input)
     -- Version Checking
     -- TODO: find better pattern matching
     elseif strmatch(strlower(arg), '^ve?r?s?i?o?n?$') then
-        local version = GetAddOnMetadata(ADDON_NAME, 'Version')
-        self:Print(format(L['You are using version %s'], version))
+        Addon:Print(format(L['You are using version %s'], version))
     end
-end
+end)

@@ -5,14 +5,27 @@ local MODULE_NAME = 'TheModule'
 local Module = Addon:NewModule(MODULE_NAME)
 local L = Addon.L
 
------------------------------------------------------ Default database values --
--- By adding this property, a db property is created for this module
-Module.defaultDB = {
+-------------------------------------------------------------------- Database --
+local defaultDB = {
+    profile = {
 
+    },
+    global = {
+
+    }
 }
 
+Module.db = Addon.db:RegisterNamespace(MODULE_NAME, defaultDB)
+
+function Module:OnProfileRefresh()
+    self:Print("OnProfileRefresh Triggered")
+end
+
+Module.db.RegisterCallback(Module, "OnProfileChanged", "OnProfileRefresh")
+Module.db.RegisterCallback(Module, "OnProfileCopied", "OnProfileRefresh")
+Module.db.RegisterCallback(Module, "OnProfileReset", "OnProfileRefresh")
+
 --------------------------------------------------------------------- Options --
--- By adding this property, a option entry is created for this module
 Module.options = {
     type = 'group',
     name = L['The Module'],
@@ -32,6 +45,9 @@ Module.options = {
         },
     }
 }
+
+-- Register the modules with the Addon
+Addon.options.args[MODULE_NAME] = Module.options
 
 -- Table to store our options, most times it will just be the database
 local values = {}
