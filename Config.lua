@@ -78,7 +78,7 @@ end
 Addon:RegisterChatCommand('rl', ReloadUI)
 
 local version = GetAddOnMetadata(ADDON_NAME, 'Version')
-Addon:RegisterChatCommand('ace', function(input)
+local function SlashHandler(input)
     local arg = Addon:GetArgs(input, 1)
 
     -- No argument, open options
@@ -99,4 +99,8 @@ Addon:RegisterChatCommand('ace', function(input)
     elseif strmatch(strlower(arg), '^ve?r?s?i?o?n?$') then
         Addon:Print(format(L['You are using version %s'], version))
     end
-end)
+end
+
+-- Register multiple slash commands with the same handler.
+Addon:RegisterChatCommand('ace', SlashHandler)
+Addon:RegisterChatCommand('ace3test', SlashHandler)
