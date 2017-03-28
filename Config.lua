@@ -73,8 +73,8 @@ function Addon:AddToBlizOptions()
     -- All options need to be registered before this is run, and since this is
     -- run in ADDON:OnInitialize, modules need to setup their options before that.
 
-    -- Once this is called, panels are no longer sortable, and all panels new
-    -- panels will be added to the ned of the list.
+    -- Once this is called, panels are no longer sortable, and all new panels
+    -- will be added to the ned of the list.
 end
 
 -------------------------------------------------------------- Slash commands --

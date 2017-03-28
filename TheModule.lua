@@ -183,8 +183,10 @@ Module.options.args.colors = {
 
 ---------------------------------------------------------------- Core Methods --
 function Module:OnInitialize()
+    -- Modules are responseable for setting their own database
     self.db = Addon.db:RegisterNamespace(MODULE_NAME, defaultDB)
 
+    -- ... and their own databse callbacks
     self.db.RegisterCallback(self, "OnProfileChanged", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")

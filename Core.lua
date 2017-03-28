@@ -1,23 +1,21 @@
 -- First variable is the name of the addon folder and corresponding .toc file
--- Second is a private table passed to all included files
+-- Second is a private table passed to all included files.
 local ADDON_NAME, Addon = ...
 
--- IDEA: make the private table truly private?
--- Do this by having NewAddon make its own table and keeping
--- the private table only for internal use
-
 ------------------------------------------------------ Addon and Locale setup --
--- Initialize Ace3 onto private table so its accessable without having
--- to to use LibStub('AceAddon-3.0'):GetAddon(). We expose it to the global
--- space so we can have access easy access to it for testing in game
+-- Initialize Ace3 onto our private table so its accessable without having to
+-- use LibStub('AceAddon-3.0'):GetAddon(). We expose it to the global space so
+-- we can have easy access to it for testing in game.
 _G[ADDON_NAME] = LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON_NAME, 'AceConsole-3.0', 'AceEvent-3.0')
 
--- Create a default locale and attach it to the Addon for later use
--- We dont need to set any strings because we are using the key as the value
+-- Create a default locale and attach it to the Addon for later use.
+-- We dont need to set any strings because we are using the key as the value.
+-- And if we add new locales this will be extracted into its own file.
 LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 Addon.L = L
 
+-- Can be used to overwrite a function without making it nil
 Addon.noop = function() --[[No Operation]] end
 
 -------------------------------------------------------------------- Database --
@@ -31,7 +29,7 @@ local defaultDB = {
 }
 
 ---------------------------------------------------------------- Core Methods --
--- Things that need to happen AFTER all our file are loaded
+-- Called on ADDON_LOADED, when all files and saved varibles have been loaded.
 function Addon:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", defaultDB, true)
 
@@ -45,8 +43,9 @@ function Addon:OnInitialize()
     self:Print("OnInitialize Triggered")
 end
 
--- Register Events, Hook functions, Create Frames, Get information from
--- the game that wasn't available in OnInitialize
+-- Called on PLAYER_LOGIN, or when the addon is enabled
+-- Register Events, Hook functions, Create Frames, Get information from the game
+-- that wasn't available in OnInitialize
 function Addon:OnEnable()
     self:Print("OnEnable Triggered")
 end
