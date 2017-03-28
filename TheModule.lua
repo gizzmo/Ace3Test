@@ -15,16 +15,6 @@ local defaultDB = {
     }
 }
 
-Module.db = Addon.db:RegisterNamespace(MODULE_NAME, defaultDB)
-
-function Module:OnProfileRefresh()
-    self:Print("OnProfileRefresh Triggered")
-end
-
-Module.db.RegisterCallback(Module, "OnProfileChanged", "OnProfileRefresh")
-Module.db.RegisterCallback(Module, "OnProfileCopied", "OnProfileRefresh")
-Module.db.RegisterCallback(Module, "OnProfileReset", "OnProfileRefresh")
-
 --------------------------------------------------------------------- Options --
 Module.options = {
     type = 'group',
@@ -193,6 +183,12 @@ Module.options.args.colors = {
 
 ---------------------------------------------------------------- Core Methods --
 function Module:OnInitialize()
+    self.db = Addon.db:RegisterNamespace(MODULE_NAME, defaultDB)
+
+    self.db.RegisterCallback(self, "OnProfileChanged", "OnProfileRefresh")
+    self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
+    self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
+
     self:Print('OnInitialize Trigered')
 end
 
