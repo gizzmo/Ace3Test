@@ -40,7 +40,7 @@ function Addon:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
 
-    self:AddToBlizOptions()
+    self:InitializeOptions()
 
     self:Print("OnInitialize Triggered")
 end

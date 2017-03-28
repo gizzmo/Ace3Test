@@ -20,12 +20,15 @@ Addon.options = {
     },
 }
 
--- Profile options
-Addon.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(Addon.db)
-Addon.options.args.profile.order = -1
+-- Called in ADDON:OnInitialize, used to setup our options
+function Addon:InitializeOptions()
+    LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, self.options)
 
--- Register the options table
-LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, Addon.options)
+    self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
+    self.options.args.profile.order = -1
+
+    self:AddToBlizOptions()
+end
 
 ------------------------------------------- Add to Blizzard interface options --
 function Addon:AddToBlizOptions()
