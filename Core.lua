@@ -30,23 +30,16 @@ local defaultDB = {
     }
 }
 
--- You dont need to set this up in OnInitialize,
--- Unless you need to do something in another file before doing this.
-Addon.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", defaultDB, true)
-
--- This needs to be defined before the callback is registered.
--- This is the only thing that makes this style of extracting not as elegant.
-function Addon:OnProfileRefresh()
-    self:Print("OnProfileRefresh Triggered")
-end
-
-Addon.db.RegisterCallback(Addon, "OnProfileChanged", "OnProfileRefresh")
-Addon.db.RegisterCallback(Addon, "OnProfileCopied", "OnProfileRefresh")
-Addon.db.RegisterCallback(Addon, "OnProfileReset", "OnProfileRefresh")
-
 ---------------------------------------------------------------- Core Methods --
 -- Things that need to happen AFTER all our file are loaded
 function Addon:OnInitialize()
+    self.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", defaultDB, true)
+
+    -- Register the database callbacks.
+    self.db.RegisterCallback(self, "OnProfileChanged", "OnProfileRefresh")
+    self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
+    self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
+
     self:AddToBlizOptions()
 
     self:Print("OnInitialize Triggered")
@@ -61,6 +54,10 @@ end
 -- Unhook, Unregister Events, Hide frames that you created.
 function Addon:OnDisable()
     self:Print("OnDisable Triggered")
+end
+
+function Addon:OnProfileRefresh()
+    self:Print("OnProfileRefresh Triggered")
 end
 
 --------------------------------------------------------------------- Modules --
