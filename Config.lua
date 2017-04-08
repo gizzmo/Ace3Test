@@ -80,7 +80,6 @@ end
 -------------------------------------------------------------- Slash commands --
 Addon:RegisterChatCommand('rl', ReloadUI)
 
-local version = GetAddOnMetadata(ADDON_NAME, 'Version')
 local function SlashHandler(input)
     local arg = Addon:GetArgs(input, 1)
 
@@ -100,7 +99,7 @@ local function SlashHandler(input)
     -- Version Checking
     -- TODO: find better pattern matching
     elseif strmatch(strlower(arg), '^ve?r?s?i?o?n?$') then
-        Addon:Print(format(L['You are using version %s'], version))
+        Addon:Print(format(L['You are using version %s'], self.version))
     end
 end
 

@@ -2,21 +2,23 @@
 -- Second is a private table passed to all included files.
 local ADDON_NAME, Addon = ...
 
------------------------------------------------------- Addon and Locale setup --
+------------------------------------------------------------------ Core Addon --
 -- Initialize Ace3 onto our private table so its accessable without having to
 -- use LibStub('AceAddon-3.0'):GetAddon(). We expose it to the global space so
 -- we can have easy access to it for testing in game.
 _G[ADDON_NAME] = LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON_NAME, 'AceConsole-3.0', 'AceEvent-3.0')
+Addon.version = GetAddOnMetadata(ADDON_NAME, "Version")
 
+-- Can be used to overwrite a function without making it nil
+Addon.noop = function() --[[No Operation]] end
+
+---------------------------------------------------------------------- Locale --
 -- Create a default locale and attach it to the Addon for later use.
 -- We dont need to set any strings because we are using the key as the value.
 -- And if we add new locales this will be extracted into its own file.
 LibStub('AceLocale-3.0'):NewLocale(ADDON_NAME, 'enUS', true, true)
 local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 Addon.L = L
-
--- Can be used to overwrite a function without making it nil
-Addon.noop = function() --[[No Operation]] end
 
 -------------------------------------------------------------------- Database --
 local defaultDB = {
