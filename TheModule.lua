@@ -191,6 +191,17 @@ function Module:OnInitialize()
     self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
 
+    self:RegisterSlashCommand('test', function(input)
+        local arg = self:GetArgs(input, 1)
+
+        self:Print('This is from the module.')
+        if arg then
+            self:Print('You passed the argument "'..arg..'"')
+        else
+            self:Print('You didnt pass anything')
+        end
+    end)
+
     self:Print('OnInitialize Trigered')
 end
 

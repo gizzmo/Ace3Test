@@ -100,6 +100,13 @@ local function SlashHandler(input)
     -- TODO: find better pattern matching
     elseif strmatch(strlower(arg), '^ve?r?s?i?o?n?$') then
         Addon:Print(format(L['You are using version %s'], self.version))
+    else
+        -- Check for register module chat commands
+        for command, func in pairs(Addon.ModuleSlashCommands) do
+            if command == arg then
+                return func(input:sub(arg:len()+2))
+            end
+        end
     end
 end
 

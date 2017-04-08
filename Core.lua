@@ -76,6 +76,18 @@ end
 Addon.modulePrototype = {}
 Addon:SetDefaultModulePrototype(Addon.modulePrototype)
 
+-- Used to let modules register sub commands for the core slash command
+Addon.ModuleSlashCommands = {}
+function Addon.modulePrototype:RegisterSlashCommand(command, func)
+    if type(func) == 'string' then
+        Addon.ModuleSlashCommands[command] = function(input)
+            self[func](self, input)
+        end
+    else
+        Addon.ModuleSlashCommands[command] = func
+    end
+end
+
 -- Libraries that are embeded into every module created.
 Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
 
