@@ -107,7 +107,7 @@ local function SlashHandler(input)
         -- Check for register module chat commands
         for command, func in pairs(Addon.ModuleSlashCommands) do
             if command == arg then
-                return func(input:sub(arg:len()+2))
+                return func(input:sub(#arg+2))
             end
         end
     end
