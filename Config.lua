@@ -1,9 +1,6 @@
 local ADDON_NAME, Addon = ...
 local L = Addon.L
 
--- Keep track of panels in the blizzard options.
-local optionPanels = {}
-
 --------------------------------------------------------------------- Options --
 Addon.options = {
     type = 'group',
@@ -30,7 +27,9 @@ function Addon:InitializeOptions()
     self:AddToBlizOptions()
 end
 
-------------------------------------------- Add to Blizzard interface options --
+-------------------------------------------------- Blizzard interface options --
+-- Keep track of panels in the blizzard options.
+local blizOptionsPanels = {}
 function Addon:AddToBlizOptions()
     local panels = {}
 
@@ -61,13 +60,13 @@ function Addon:AddToBlizOptions()
     local Dialog = LibStub('AceConfigDialog-3.0')
 
     -- Create the link to the general options
-    optionPanels['general'] = Dialog:AddToBlizOptions(ADDON_NAME, self:GetName(), nil, 'general')
+    blizOptionsPanels['general'] = Dialog:AddToBlizOptions(ADDON_NAME, self:GetName(), nil, 'general')
 
     -- Create a link for all the panels
     for i=1,#panels do
         local path = panels[i]
         local name = self.options.args[path].name
-        optionPanels[path] = Dialog:AddToBlizOptions(ADDON_NAME, name, ADDON_NAME, path)
+        blizOptionsPanels[path] = Dialog:AddToBlizOptions(ADDON_NAME, name, ADDON_NAME, path)
     end
 
     -- All options need to be registered before this is run, and since this is
@@ -75,6 +74,19 @@ function Addon:AddToBlizOptions()
 
     -- Once this is called, panels are no longer sortable, and all new panels
     -- will be added to the ned of the list.
+end
+
+function Addon:OpenBlizOptions()
+    -- Start by opening the interface options so things can load
+    InterfaceOptionsFrame_Show()
+
+    -- Open to the second panel to expand the options
+    InterfaceOptionsFrame_OpenToCategory(blizOptionsPanels['profile'])
+    InterfaceOptionsFrame_OpenToCategory(blizOptionsPanels['general'])
+    InterfaceOptionsFrame:Raise()
+
+    -- TODO: Figure out why it wont open if its not visable
+    -- the user has to manually scroll the list to get access to it.
 end
 
 -------------------------------------------------------------- Slash commands --
@@ -85,16 +97,7 @@ local function SlashHandler(input)
 
     -- No argument, open options
     if not arg then
-        -- Start by opening the interface options so things can load
-        InterfaceOptionsFrame_Show()
-
-        -- Open to the second panel to expand the options
-        InterfaceOptionsFrame_OpenToCategory(optionPanels['profile'])
-        InterfaceOptionsFrame_OpenToCategory(optionPanels['general'])
-        InterfaceOptionsFrame:Raise()
-
-        -- TODO: Figure out why it wont open if its not visable
-        -- the user has to manually scroll the list to get access to it.
+        Addon:OpenBlizOptions()
 
     -- Version Checking
     -- TODO: find better pattern matching
