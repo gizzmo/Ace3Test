@@ -21,13 +21,16 @@ local L = LibStub("AceLocale-3.0"):GetLocale(ADDON_NAME)
 Addon.L = L
 
 -------------------------------------------------------------------- Database --
+-- A database uses several data types, which detemins how its accessable.
+--   char, class, race, realm, faction, factionrealm, global, profile
+--
+-- This default table can also enclude magic keys to deal with in inheritance.
+--   ['*']   Any sibling key that doesnt exist uses this table.
+--   ['**']  Works the same, but other defined tables will inherite from this.
 local defaultDB = {
     profile = {
 
     },
-    global = {
-
-    }
 }
 
 ---------------------------------------------------------------- Core Methods --
@@ -35,7 +38,17 @@ local defaultDB = {
 function Addon:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", defaultDB, true)
 
-    -- Register the database callbacks.
+    -- The database has severl callbacks available.
+    --   OnNewProfile(db, profile)
+    --   OnProfileChanged(db, newProfile)
+    --   OnProfileDeleted(db, profile)
+    --   OnProfileCopied(db, sourceProfile)
+    --   OnProfileReset(db)
+    --   OnProfileShutdown(db)
+    --   OnDatabaseShutdown(db)
+
+    -- These are a good starting point. When ever a profile is changed we may
+    -- want to update a few things.
     self.db.RegisterCallback(self, "OnProfileChanged", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileCopied", "OnProfileRefresh")
     self.db.RegisterCallback(self, "OnProfileReset", "OnProfileRefresh")
