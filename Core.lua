@@ -78,6 +78,10 @@ end
 
 -- Generalized method to call a method on all modules
 function Addon:FireModuleMethod(method, ...)
+    if type(method) ~= 'string' then
+        error(("Usage: FireModuleMethod(method[, arg, arg, ...]): 'method' - string expcted got '%s'."):format(type(method)), 2)
+    end
+
     for name, module in self:IterateModules() do
         if type(module[method]) == 'function' then
            module[method](module, ...)
@@ -92,12 +96,22 @@ Addon:SetDefaultModulePrototype(Addon.modulePrototype)
 -- Used to let modules register sub commands for the core slash command
 Addon.ModuleSlashCommands = {}
 function Addon.modulePrototype:RegisterSlashCommand(command, func)
+    if type(command) ~= 'string' then
+       error(("Usage: RegisterSlashCommand(command, func): 'command' - string expected got '%s'."):format(type(command)), 2)
+    end
+
+    -- Shortcut to the Modules method by the same name
     if type(func) == 'string' then
         Addon.ModuleSlashCommands[command] = function(input)
             self[func](self, input)
         end
-    else
+
+    -- An anonymous function
+    elseif type(func) == 'function' then
         Addon.ModuleSlashCommands[command] = func
+
+    else
+        error(("Usage: RegisterSlashCommand(command, func): 'func' - string or function expected got '%s'"):format(type(func)), 2)
     end
 end
 
