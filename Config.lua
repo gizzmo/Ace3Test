@@ -76,6 +76,7 @@ function Addon:AddToBlizOptions()
     -- will be added to the ned of the list.
 end
 
+-- TODO: Update to open to child elements
 function Addon:OpenBlizOptions()
     -- Start by opening the interface options so things can load
     InterfaceOptionsFrame_Show()
