@@ -38,7 +38,7 @@ local defaultDB = {
 function Addon:OnInitialize()
     self.db = LibStub("AceDB-3.0"):New(ADDON_NAME.."DB", defaultDB, true)
 
-    -- The database has severl callbacks available.
+    -- The database has several callbacks available.
     --   OnNewProfile(db, profile)
     --   OnProfileChanged(db, newProfile)
     --   OnProfileDeleted(db, profile)
