@@ -102,11 +102,15 @@ function ModulePrototype:RegisterSlashCommand(command, func)
 
     -- Shortcut to the Modules method by the same name
     if type(func) == 'string' then
-        Addon.ModuleSlashCommands[command] = function(input)
-            self[func](self, input)
+        if type(self[func]) ~= 'function' then
+            error(("Usage: RegisterSlashCommand(command, func): 'func' - method '%s' not found on self."):format(func), 2)
         end
 
-    -- An anonymous function
+        Addon.ModuleSlashCommands[command] = function(...)
+            self[func](self, ...)
+        end
+
+    -- A function reference.
     elseif type(func) == 'function' then
         Addon.ModuleSlashCommands[command] = func
 
