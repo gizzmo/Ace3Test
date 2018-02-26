@@ -119,6 +119,11 @@ function ModulePrototype:RegisterSlashCommand(command, func)
     end
 end
 
+-- This is called when a module is created.
+function Addon:OnModuleCreated(moduleName)
+    --
+end
+
 -- Libraries that are embeded into every module created.
 Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
 
