@@ -90,12 +90,12 @@ function Addon:FireModuleMethod(method, ...)
 end
 
 -- Module prototype table supplies methods and properties to all modules
-Addon.modulePrototype = {}
-Addon:SetDefaultModulePrototype(Addon.modulePrototype)
+local ModulePrototype = {}
+Addon:SetDefaultModulePrototype(ModulePrototype)
 
 -- Used to let modules register sub commands for the core slash command
 Addon.ModuleSlashCommands = {}
-function Addon.modulePrototype:RegisterSlashCommand(command, func)
+function ModulePrototype:RegisterSlashCommand(command, func)
     if type(command) ~= 'string' then
        error(("Usage: RegisterSlashCommand(command, func): 'command' - string expected got '%s'."):format(type(command)), 2)
     end
