@@ -24,10 +24,25 @@ function Addon:InitializeOptions()
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1
 
-    self:AddToBlizOptions()
+    -- REMOVE this line and if you're not using blizzard options.
+    if self.AddToBlizOptions then return self:AddToBlizOptions() end
+end
+
+function Addon:OpenOptions()
+    -- REMOVE this line and if you're not using blizzard options.
+    if self.OpenBlizOptions then return self:OpenBlizOptions() end
+
+    local Dialog = LibStub('AceConfigDialog-3.0')
+    if Dialog.OpenFrames[ADDON_NAME] then
+        Dialog:Close(ADDON_NAME)
+    else
+        Dialog:Open(ADDON_NAME)
+    end
 end
 
 -------------------------------------------------- Blizzard interface options --
+-- REMOVE this section if you're not using blizzard options.
+
 -- Keep track of panels in the blizzard options.
 local blizOptionsPanels = {}
 function Addon:AddToBlizOptions()
@@ -98,7 +113,7 @@ local function SlashHandler(input)
 
     -- No argument, open options
     if not arg then
-        Addon:OpenBlizOptions()
+        Addon:OpenOptions()
 
     -- Version Checking
     -- TODO: find better pattern matching
