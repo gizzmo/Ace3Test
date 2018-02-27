@@ -63,6 +63,10 @@ end
 -- that wasn't available in OnInitialize
 function Addon:OnEnable()
     self:Print("OnEnable Triggered")
+
+    -- enter/leave combat for :RunOnLeaveCombat
+    self:RegisterEvent("PLAYER_REGEN_ENABLED")
+    self:RegisterEvent("PLAYER_REGEN_DISABLED")
 end
 
 -- Unhook, Unregister Events, Hide frames that you created.
@@ -129,6 +133,67 @@ function Addon.ConvertMethodToFunction(namespace, func_name)
 
     return function(...)
         return namespace[func_name](namespace, ...)
+    end
+end
+
+-- Wrap the given function so that any call to it will be piped through
+-- Addon:RunOnLeaveCombat.
+function Addon:OutOfCombatWrapper(func)
+    if type(func) ~= 'function' then
+        error(("Usage: OutOfCombatWrapper(func): 'func' - function expcted got '%s'."):format(type(func)), 2)
+    end
+
+    return function(...)
+        return Addon:RunOnLeaveCombat(func, ...)
+    end
+end
+
+do
+    local in_combat, in_lockdown, action_queue = false, false, {}
+
+    function Addon:PLAYER_REGEN_ENABLED()
+        in_combat = false
+        in_lockdown = false
+
+        for i, action in ipairs(action_queue) do
+            action.func(unpack(action, 1, action.num))
+            action_queue[i] = nil
+        end
+    end
+
+    function Addon:PLAYER_REGEN_DISABLED()
+        in_combat = true
+    end
+
+    function Addon:RunOnLeaveCombat(func, ...)
+        if type(func) ~= 'function' then
+            error(("Usage: RunOnLeaveCombat(func[, ...]): 'func' - function expcted got '%s'."):format(type(func)), 2)
+        end
+
+        -- Out of combat, call right away
+        if not in_combat then
+            return func(...)
+        end
+        -- Still in PLAYER_REGEN_DISABLED
+        if not in_lockdown then
+            in_lockdown = InCombatLockdown()
+            if not in_lockdown then
+                return func(...)
+            end
+        end
+
+        -- Buildup the action table
+        local action = {
+            func = func,
+            num = select('#', ...)
+        }
+
+        -- Save the parameters passed
+        for i=1, action.num do
+            action[i] = select(i, ...)
+        end
+
+        action_queue[#action_queue+1] = action
     end
 end
 
