@@ -10,24 +10,35 @@ local defaultDB = {
     profile = {
 
     },
-    global = {
-
-    }
 }
+
+-- Makes the order they are created the order they are displayed
+local new_order
+do
+    local current = 0
+    function new_order()
+        current = current + 1
+        return current
+    end
+end
 
 --------------------------------------------------------------------- Options --
 Module.options = {
     type = 'group',
     name = L['The Module'],
+
+    get = function(info) return Module.db.profile[info[#info]] end,
+    set = function(info, value) Module.db.profile[info[#info]] = value end,
+
     args = {
         intro1 = {
-            order = 1,
+            order = new_order(),
             type = 'description',
             name = L['Demo options'],
             fontSize = 'large',
         },
         intro2 = {
-            order = 2,
+            order = new_order(),
             type = 'description',
             name = L['This module is just a space to test out how options are built. '
                 ..'Each and every possible type of input type. Each type is '
@@ -36,21 +47,9 @@ Module.options = {
     }
 }
 
--- Register the modules with the Addon
-Addon.options.args[MODULE_NAME] = Module.options
-
--- Table to store our options, most times it will just be the database
-local values = {}
-Module.options.get = function(info)
-    return values[info[#info]]
-end
-Module.options.set = function(info, value)
-    values[info[#info]] = value
-end
-
 -- The options table is split here to show that you dont need to build it all at once.
 Module.options.args.executes = {
-    type = 'group', inline = true,
+    type = 'group', inline = true, order = new_order(),
     name = L['Execute types'],
     args = {
         execute = {
@@ -61,7 +60,7 @@ Module.options.args.executes = {
     }
 }
 Module.options.args.inputs = {
-    type = 'group', inline = true,
+    type = 'group', inline = true, order = new_order(),
     name = L['Inputs types'],
     args = {
         input = {
@@ -72,12 +71,13 @@ Module.options.args.inputs = {
             type = 'input',
             name = L['Input Multi-line'],
             multiline = true,
+            width = 'double',
         },
 
     }
 }
 Module.options.args.toggles = {
-    type = 'group', inline = true,
+    type = 'group', inline = true, order = new_order(),
     name = L['Toggle types'],
     args = {
         toggle = {
@@ -92,7 +92,7 @@ Module.options.args.toggles = {
     }
 }
 Module.options.args.ranges = {
-    type = 'group', inline = true,
+    type = 'group', inline = true, order = new_order(),
     name = L['Range types'],
     args = {
         range = {
@@ -118,7 +118,7 @@ local function getSelectValues()
     return {'First value','Second value','Third value','Fourth value','Fifth value','Sixth value'}
 end
 Module.options.args.selects = {
-    type = 'group', inline = true,
+    type = 'group', inline = true, order = new_order(),
     name = L['Select types'],
     args = {
         select = {
@@ -135,18 +135,16 @@ Module.options.args.selects = {
     }
 }
 Module.options.args.multiselects = {
-    type = 'group', inline = true,
+    type = 'group', inline = true, order = new_order(),
     name = L["Multi Selects types"],
     -- Multiselect requires a extra table to store the state of each value
     get = function(info, key)
-        values[info[#info]] = values[info[#info]] or {}
-        return values[info[#info]][key]
-        -- body...
+        Module.db.profile[info[#info]] = Module.db.profile[info[#info]] or {}
+        return Module.db.profile[info[#info]][key]
     end,
     set = function(info, key, value)
-        values[info[#info]] = values[info[#info]] or {}
-        values[info[#info]][key] = value
-        -- body...
+        Module.db.profile[info[#info]] = Module.db.profile[info[#info]] or {}
+        Module.db.profile[info[#info]][key] = value
     end,
     args = {
         multiselect = {
@@ -163,11 +161,11 @@ Module.options.args.multiselects = {
     }
 }
 Module.options.args.colors = {
-    type = 'group', inline = true,
+    type = 'group', inline = true, order = new_order(),
     name = L["Colors"],
     -- Colors deal with multiple values. r,g,b,a
-    get = function(info) return unpack(values[info[#info]] or {}) end,
-    set = function(info, ...) values[info[#info]] = {...} end,
+    get = function(info) return unpack(Module.db.profile[info[#info]] or {}) end,
+    set = function(info, ...) Module.db.profile[info[#info]] = {...} end,
     args = {
         color = {
             type = 'color',
@@ -180,6 +178,9 @@ Module.options.args.colors = {
         },
     }
 }
+
+-- Register the modules with the Addon
+Addon.options.args[MODULE_NAME] = Module.options
 
 ---------------------------------------------------------------- Core Methods --
 function Module:OnInitialize()
