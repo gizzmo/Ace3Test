@@ -76,7 +76,7 @@ end
 
 --------------------------------------------------------------------- Modules --
 
--- Generalized method to call a method on all modules
+-- Call a given method on all modules if those modules have the method
 function Addon:FireModuleMethod(method, ...)
     if type(method) ~= 'string' then
         error(("Usage: FireModuleMethod(method[, arg, arg, ...]): 'method' - string expcted got '%s'."):format(type(method)), 2)
@@ -99,24 +99,11 @@ function ModulePrototype:RegisterSlashCommand(command, func)
     if type(command) ~= 'string' then
        error(("Usage: RegisterSlashCommand(command, func): 'command' - string expected got '%s'."):format(type(command)), 2)
     end
-
-    -- Shortcut to the Modules method by the same name
-    if type(func) == 'string' then
-        if type(self[func]) ~= 'function' then
-            error(("Usage: RegisterSlashCommand(command, func): 'func' - method '%s' not found on self."):format(func), 2)
-        end
-
-        Addon.ModuleSlashCommands[command] = function(...)
-            self[func](self, ...)
-        end
-
-    -- A function reference.
-    elseif type(func) == 'function' then
-        Addon.ModuleSlashCommands[command] = func
-
-    else
+    if type(func) ~= 'string' and type(func) ~= 'function' then
         error(("Usage: RegisterSlashCommand(command, func): 'func' - string or function expected got '%s'"):format(type(func)), 2)
     end
+
+    Addon.ModuleSlashCommands[command] = Addon.ConvertMethodToFunction(self, func)
 end
 
 -- This is called when a module is created.
@@ -126,5 +113,23 @@ end
 
 -- Libraries that are embeded into every module created.
 Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
+
+
+------------------------------------------------------------------- Utilities --
+-- Leave a function as-is or if a string is passed in, convert it to a
+-- namespace-method function call.
+function Addon.ConvertMethodToFunction(namespace, func_name)
+    if type(func_name) == "function" then
+        return func_name
+    end
+
+    if type(namespace[func_name]) ~= 'function' then
+        error(("Usage: ConvertMethodToFunction(namespace, func_name): 'func_name' - method '%s' not found on namespace."):format(func_name), 2)
+    end
+
+    return function(...)
+        return namespace[func_name](namespace, ...)
+    end
+end
 
 ------------------------------------------------------------------------ Fin! --
