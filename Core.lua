@@ -147,7 +147,7 @@ function Addon:OutOfCombatWrapper(func)
     end
 
     return function(...)
-        return Addon:RunOnLeaveCombat(func, ...)
+        Addon:RunOnLeaveCombat(func, ...)
     end
 end
 
@@ -168,6 +168,8 @@ do
         in_combat = true
     end
 
+    -- Call a function if out of combat or schedule to run once combat ends.
+    -- If currently out of combat, the function provided will be called without delay.
     function Addon:RunOnLeaveCombat(func, ...)
         if type(func) ~= 'function' then
             error(("Usage: RunOnLeaveCombat(func[, ...]): 'func' - function expcted got '%s'."):format(type(func)), 2)
@@ -175,13 +177,15 @@ do
 
         -- Out of combat, call right away
         if not in_combat then
-            return func(...)
+            func(...)
+            return
         end
         -- Still in PLAYER_REGEN_DISABLED
         if not in_lockdown then
             in_lockdown = InCombatLockdown()
             if not in_lockdown then
-                return func(...)
+                func(...)
+                return
             end
         end
 
