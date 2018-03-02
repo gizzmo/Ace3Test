@@ -12,6 +12,7 @@ local defaultDB = {
     },
 }
 
+--------------------------------------------------------------------- Options --
 -- Makes the order they are created the order they are displayed
 local new_order
 do
@@ -22,7 +23,6 @@ do
     end
 end
 
---------------------------------------------------------------------- Options --
 Module.options = {
     type = 'group',
     name = L['The Module'],
