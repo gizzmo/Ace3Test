@@ -93,6 +93,14 @@ function Addon:FireModuleMethod(method, ...)
     end
 end
 
+-- This is called when a module is created.
+function Addon:OnModuleCreated(moduleName)
+    --
+end
+
+-- Libraries that are embeded into every module created.
+Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
+
 -- Module prototype table supplies methods and properties to all modules
 local ModulePrototype = {}
 Addon:SetDefaultModulePrototype(ModulePrototype)
@@ -112,15 +120,6 @@ function ModulePrototype:RegisterSlashCommand(command, func)
 
     Addon.ModuleSlashCommands[command] = Addon.ConvertMethodToFunction(self, func)
 end
-
--- This is called when a module is created.
-function Addon:OnModuleCreated(moduleName)
-    --
-end
-
--- Libraries that are embeded into every module created.
-Addon:SetDefaultModuleLibraries('AceConsole-3.0', 'AceEvent-3.0')
-
 
 ------------------------------------------------------------------- Utilities --
 -- Leave a function as-is or if a string is passed in, convert it to a
