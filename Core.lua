@@ -106,6 +106,9 @@ function ModulePrototype:RegisterSlashCommand(command, func)
     if type(func) ~= 'string' and type(func) ~= 'function' then
         error(("Usage: RegisterSlashCommand(command, func): 'func' - string or function expected got '%s'"):format(type(func)), 2)
     end
+    if type(func) == 'string' and type(self[func]) ~= 'function' then
+        error(("Usage: RegisterSlashCommand(command, func): 'func' - method '%s' not found."):format(func), 2)
+    end
 
     Addon.ModuleSlashCommands[command] = Addon.ConvertMethodToFunction(self, func)
 end
