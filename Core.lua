@@ -94,7 +94,7 @@ function Addon:FireModuleMethod(method, ...)
 end
 
 -- This is called when a module is created.
-function Addon:OnModuleCreated(moduleName)
+function Addon:OnModuleCreated(module)
     --
 end
 
