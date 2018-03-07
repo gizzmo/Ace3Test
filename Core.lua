@@ -9,9 +9,6 @@ local ADDON_NAME, Addon = ...
 _G[ADDON_NAME] = LibStub('AceAddon-3.0'):NewAddon(Addon, ADDON_NAME, 'AceConsole-3.0', 'AceEvent-3.0')
 Addon.version = GetAddOnMetadata(ADDON_NAME, "Version")
 
--- Can be used to overwrite a function without making it nil
-Addon.noop = function() --[[No Operation]] end
-
 ---------------------------------------------------------------------- Locale --
 -- Create a default locale and attach it to the Addon for later use.
 -- We dont need to set any strings because we are using the key as the value.
@@ -122,6 +119,9 @@ function ModulePrototype:RegisterSlashCommand(command, func)
 end
 
 ------------------------------------------------------------------- Utilities --
+-- Can be used to overwrite a function without making it nil
+Addon.noop = function() --[[No Operation]] end
+
 -- Leave a function as-is or if a string is passed in, convert it to a
 -- namespace-method function call.
 function Addon.ConvertMethodToFunction(namespace, func_name)
