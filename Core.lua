@@ -28,6 +28,11 @@ local defaultDB = {
     profile = {
 
     },
+    global = {
+        -- We store the enabled status setting here, so modules dont have to
+        -- deal with tracking it their self
+        debug = {},
+    }
 }
 
 ---------------------------------------------------------------- Core Methods --
@@ -52,14 +57,14 @@ function Addon:OnInitialize()
 
     self:InitializeOptions()
 
-    self:Print("OnInitialize Triggered")
+    self:Debug("OnInitialize Triggered")
 end
 
 -- Called on PLAYER_LOGIN, or when the addon is enabled
 -- Register Events, Hook functions, Create Frames, Get information from the game
 -- that wasn't available in OnInitialize
 function Addon:OnEnable()
-    self:Print("OnEnable Triggered")
+    self:Debug("OnEnable Triggered")
 
     -- Leaving combat for :RunOnLeaveCombat
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
@@ -67,11 +72,24 @@ end
 
 -- Unhook, Unregister Events, Hide frames that you created.
 function Addon:OnDisable()
-    self:Print("OnDisable Triggered")
+    self:Debug("OnDisable Triggered")
 end
 
 function Addon:OnProfileRefresh()
-    self:Print("OnProfileRefresh Triggered")
+    self:Debug("OnProfileRefresh Triggered")
+end
+
+-------------------------------------------------------------------- Debuging --
+function Addon:Debug(...)
+    if not Addon.db.global.debug[self:GetName()] then return end
+    self:Print("|cFFFFFF00Debug:|r", ...) -- Handover to AceConsole
+end
+function Addon:GetDebugStatus(module)
+    return self.db.global.debug[module:GetName()]
+end
+function Addon:SetDebugStatus(module, value)
+    local value = not not value  -- insure its a boolean
+    self.db.global.debug[module:GetName()] = value
 end
 
 --------------------------------------------------------------------- Modules --
@@ -91,7 +109,7 @@ end
 
 -- This is called when a module is created.
 function Addon:OnModuleCreated(module)
-    --
+    self:SetupDebugOptions(module)
 end
 
 -- Libraries that are embeded into every module created.
@@ -116,6 +134,9 @@ function ModulePrototype:RegisterSlashCommand(command, func)
 
     Addon.ModuleSlashCommands[command] = Addon.ConvertMethodToFunction(self, func)
 end
+
+-- Inherit debugging
+ModulePrototype.Debug = Addon.Debug
 
 ------------------------------------------------------------------- Utilities --
 -- Can be used to overwrite a function without making it nil
@@ -153,6 +174,7 @@ do
     local action_queue = {}
 
     function Addon:PLAYER_REGEN_ENABLED()
+        self:Debug('Leaving Combat')
         for i, action in ipairs(action_queue) do
             action.func(unpack(action, 1, action.num))
             action_queue[i] = nil

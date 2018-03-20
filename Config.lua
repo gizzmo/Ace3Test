@@ -17,12 +17,66 @@ Addon.options = {
     },
 }
 
+----------------------------------------------------------- Debugging Options --
+Addon.options.args.debug = {
+    order = -1, -- alwas at the end?
+    type = 'group',
+    name = L["Debugging"],
+    desc = L["Module debugging menu."],
+    args = {
+        desc = {
+            order = 1,
+            type = 'description',
+            name = L["Debugging messages help developers or testers see "..
+                "what is happening in real time. Regular users should leave "..
+                "debugging turned off except when troubleshooting a problem."],
+        },
+        spacer = {
+            order = 3,
+            name = " ",
+            type = "description",
+        },
+    },
+}
+
+do
+    local function get(info)
+        return Addon:GetDebugStatus(info.arg)
+    end
+    local function set(info, value)
+        Addon:SetDebugStatus(info.arg, value)
+    end
+
+    function Addon:SetupDebugOptions(module)
+        local args = self.options.args.debug.args
+
+        local moduleName = module:GetName()
+        if not args[moduleName] then
+            args[moduleName] = {
+                name = moduleName,
+                desc = format(L["Enable debugging messages for the %s module."], moduleName),
+                type = "toggle",
+                get = get,
+                set = set,
+
+                -- This is passed with the 'info' in callbacks.
+                arg = module,
+            }
+        end
+    end
+end
+
+--------------------------------------------------------------------------------
+
 -- Called in ADDON:OnInitialize, used to setup our options
 function Addon:InitializeOptions()
     LibStub('AceConfigRegistry-3.0'):RegisterOptionsTable(ADDON_NAME, self.options)
 
     self.options.args.profile = LibStub('AceDBOptions-3.0'):GetOptionsTable(self.db)
     self.options.args.profile.order = -1
+
+    -- Setup debuggin options for the core addon.
+    self:SetupDebugOptions(self)
 
     -- REMOVE this line and if you're not using blizzard options.
     if self.AddToBlizOptions then return self:AddToBlizOptions() end

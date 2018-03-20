@@ -16,15 +16,15 @@ local defaultDB = {
 function Module:OnInitialize()
     self.db = Addon.db:RegisterNamespace(MODULE_NAME, defaultDB)
 
-    self:Print('OnInitialize Trigered')
+    self:Debug('OnInitialize Trigered')
 end
 
 function Module:OnEnable()
-    self:Print('OnEnabled Trigered')
+    self:Debug('OnEnabled Trigered')
 end
 
 function Module:OnDisable()
-    self:Print('OnDisable Trigered')
+    self:Debug('OnDisable Trigered')
 end
 
 ------------------------------------------------------------------------- Fin --
