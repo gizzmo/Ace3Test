@@ -66,7 +66,7 @@ end
 function Addon:OnEnable()
     self:Debug("OnEnable Triggered")
 
-    -- Leaving combat for :RunOnLeaveCombat
+    -- Leaving combat for :RunAfterCombat
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
 end
 
@@ -159,14 +159,14 @@ function Addon.ConvertMethodToFunction(namespace, func_name)
 end
 
 -- Wrap the given function so that any call to it will be piped through
--- Addon:RunOnLeaveCombat.
+-- Addon:RunAfterCombat.
 function Addon:OutOfCombatWrapper(func)
     if type(func) ~= 'function' then
         error(("Usage: OutOfCombatWrapper(func): 'func' - function expcted got '%s'."):format(type(func)), 2)
     end
 
     return function(...)
-        Addon:RunOnLeaveCombat(func, ...)
+        Addon:RunAfterCombat(func, ...)
     end
 end
 
@@ -183,9 +183,9 @@ do
 
     -- Call a function if out of combat or schedule to run once combat ends.
     -- If currently out of combat, the function provided will be called without delay.
-    function Addon:RunOnLeaveCombat(func, ...)
+    function Addon:RunAfterCombat(func, ...)
         if type(func) ~= 'function' then
-            error(("Usage: RunOnLeaveCombat(func[, ...]): 'func' - function expcted got '%s'."):format(type(func)), 2)
+            error(("Usage: RunAfterCombat(func[, ...]): 'func' - function expcted got '%s'."):format(type(func)), 2)
         end
 
         -- Not in combat, call right away
