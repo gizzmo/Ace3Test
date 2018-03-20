@@ -61,9 +61,8 @@ end
 function Addon:OnEnable()
     self:Print("OnEnable Triggered")
 
-    -- enter/leave combat for :RunOnLeaveCombat
+    -- Leaving combat for :RunOnLeaveCombat
     self:RegisterEvent("PLAYER_REGEN_ENABLED")
-    self:RegisterEvent("PLAYER_REGEN_DISABLED")
 end
 
 -- Unhook, Unregister Events, Hide frames that you created.
@@ -151,20 +150,13 @@ function Addon:OutOfCombatWrapper(func)
 end
 
 do
-    local in_combat, in_lockdown, action_queue = false, false, {}
+    local action_queue = {}
 
     function Addon:PLAYER_REGEN_ENABLED()
-        in_combat = false
-        in_lockdown = false
-
         for i, action in ipairs(action_queue) do
             action.func(unpack(action, 1, action.num))
             action_queue[i] = nil
         end
-    end
-
-    function Addon:PLAYER_REGEN_DISABLED()
-        in_combat = true
     end
 
     -- Call a function if out of combat or schedule to run once combat ends.
@@ -174,18 +166,10 @@ do
             error(("Usage: RunOnLeaveCombat(func[, ...]): 'func' - function expcted got '%s'."):format(type(func)), 2)
         end
 
-        -- Out of combat, call right away
-        if not in_combat then
+        -- Not in combat, call right away
+        if not InCombatLockdown() then
             func(...)
             return
-        end
-        -- Still in PLAYER_REGEN_DISABLED
-        if not in_lockdown then
-            in_lockdown = InCombatLockdown()
-            if not in_lockdown then
-                func(...)
-                return
-            end
         end
 
         -- Buildup the action table
